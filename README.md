@@ -1,6 +1,6 @@
-# Numerical methods for Physics and Astronomy ASTR800
+# Numerical methods for Physics and Astronomy
 
-This class will use Julia
+This class will use the Julia programming language as well as Python's matplotlib library for visualizations. 
 
 ## Julia setup
 
