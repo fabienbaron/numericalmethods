@@ -4,13 +4,13 @@ This class will use the Julia programming language as well as Python's matplotli
 
 ## Julia setup
 
-Install Julia from https://julialang.org/downloads/
+Install Julia from https://julialang.org/downloads/ (macports users can run `port install julia`)
 
-Install Pyplot by doing ```julia Pkg.add("PyPlot")``` on the Julia command line. Mac users will probably need to have XQuartz installed before. See here for more details: https://github.com/JuliaPy/PyPlot.jl
+Install [Pyplot](https://github.com/JuliaPy/PyPlot.jl) by running `Pkg.add("PyPlot")` on the Julia command line (or `julia -E Pkg.add("PyPlot")` on the OS command line). Mac users will probably need to have [XQuartz](https://www.xquartz.org/) installed before.
 
 Install the Atom editor https://atom.io/.
 
-Install the language-julia Atom package from within Atom (CTRL+comma to open Settings, then Package tab).
+Install the language-julia Atom package from within Atom (CTRL+comma to open Settings, then Install tab).
 
 More advanced users can directly use Juno (a Julia + Atom remix) http://junolab.org/
 
