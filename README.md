@@ -1,12 +1,12 @@
 # Numerical methods for Physics and Astronomy
 
-This class will use the Julia programming language as well as Python's matplotlib library for visualizations. 
+This class will use the Julia programming language as well as Python's matplotlib library for visualizations.
 
 ## Julia setup
 
-Install Julia from https://julialang.org/downloads/ (macports users can run `port install julia`)
+Install Julia from https://julialang.org/downloads/
 
-Install [Pyplot](https://github.com/JuliaPy/PyPlot.jl) by running `Pkg.add("PyPlot")` on the Julia command line (or `julia -E Pkg.add("PyPlot")` on the OS command line). Mac users will probably need to have [XQuartz](https://www.xquartz.org/) installed before.
+Install [Pyplot](https://github.com/JuliaPy/PyPlot.jl) by running `Pkg.add("PyPlot")` on the Julia command line (or `julia -E Pkg.add("PyPlot")` on the OS command line). Mac users will need to have [XQuartz](https://www.xquartz.org/) installed before.
 
 Install the Atom editor https://atom.io/.
 
@@ -23,7 +23,7 @@ More advanced users can directly use Juno (a Julia + Atom remix) http://junolab.
 3. Check that it can plot basic functions using the PyPlot library.
 
 ```julia
-using PyPlot
+using PyPlot #note: on MacOS julia will install lots of files !
 x=linspace(-pi, pi, 100)
 plot(x,sin.(x))
 ```
