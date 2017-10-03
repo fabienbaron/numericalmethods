@@ -10,6 +10,6 @@ chi2 = norm((x0-b)./sigma)^2 # using the l2 norm squared
 chi2 = (x0-b)'*W*(x0-b) # the matricial form for any sigma
 # Tikhonov solution
 λ = 1e-4
-x=(W+λ[i]*I)\(W*b)
+x=(W+λ*I)\(W*b)
 xopt = x.*(x.>0)
 imview3(x0,b,xopt,figtitle="Tikhonov regularization");
