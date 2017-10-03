@@ -8,7 +8,7 @@ function imview3(xtruth,xnoisy,xreconst;figtitle="", color="gray")
         xreconst = reshape(xreconst,nx,nx);
     end
 
-    fig = figure(figtitle,figsize=(30,10))
+    fig = figure(figtitle,figsize=(15,5))
     subplot(1,3,1)
     imshow(xtruth, cmap=ColorMap(color), interpolation="none");
     title("Truth")
