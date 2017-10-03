@@ -20,16 +20,16 @@ dist = 1e99
 
 for i=1:nλ
     x=(W+λ[i]*I)\(W*y)
-    chi2[i] = (x-y)'*W*(x-y)/length(x0)
+    chi2[i] = ((x-y)'*W*(x-y))[1]/length(x0)
     reg[i] = norm(x,2)^2
     clf();
-    println("It: ", i, " ", λ[i], " dist: ", norm(x-x0,1));
+    println("It: ", i, " ", λ[i], " chi2: ", chi2[i]);
     if norm(x-x0,1)<dist
         dist = norm(x-x0,1);
-        xopt = copy(x);
+        xopt = x.*(x.>0);
     end
-#    imview(reshape(x,64,64))
-#    readline();
+    #imview(reshape(x.*(x.>0),64,64))
+    #readline();
 end
 
 clf();
@@ -47,7 +47,7 @@ DtD = D'*D;
 
 for i=1:nλ
     x=(W+λ[i]*DtD)\(W*y)
-    chi2[i] = (x-y)'*W*(x-y)/length(x0)
+    chi2[i] = ((x-y)'*W*(x-y))[1]/length(x0)
     reg[i] = norm(x,2)^2
     clf();
     println("It: ", i, " ", λ[i], " dist: ", norm(x-x0,1));
