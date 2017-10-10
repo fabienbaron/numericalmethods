@@ -52,9 +52,9 @@ logZ1 = log(delta_θ1*delta_θ2) + logsumexp(-0.5*chi2_M1)
 println("log Z1 = ", logZ1);
 
 # 3D grid search, MODEL M2: parabolic law
-gridθ1= linspace(0,1, 101);
-gridθ2= linspace(0,1, 101);
-gridθ3= linspace(0,1, 101);
+gridθ1= linspace(0,1, 301);
+gridθ2= linspace(0,1, 301);
+gridθ3= linspace(-5,5, 301);
 
 chi2_M2 = zeros(length(gridθ1),length(gridθ2),length(gridθ3));
 for i=1:length(gridθ1)
