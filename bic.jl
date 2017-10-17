@@ -12,8 +12,7 @@ x = rand(n);
 θ=zeros(2); θ[1]=.2; θ[2]=.5;
 σ=.5
 y = θ[1]+θ[2]*x + σ*randn(n) ;
-
-scatter(x,y);
+errorbar(x,y,σ+0*x,linestyle="none");
 plot(x, θ[1]+θ[2]*x);
 
 
@@ -29,9 +28,8 @@ println("best chi2 for model M0: ", minimum(chi2_M0))
 # computation of evidence (marginal likelihood)
 delta_θ = gridθ[2]-gridθ[1];
 logZ0 = log(delta_θ) + logsumexp(-0.5*chi2_M0)
-println("log Z0 = ", logZ0);
-
-
+k=1;
+println("log Z0 = ", logZ0, " AIC= ", minimum(chi2_M0)+2*k, " BIC=  ", minimum(chi2_M0)+k*log(n));
 
 # 2D grid search, MODEL M1: linear law
 gridθ1= linspace(0,1, 101)
@@ -49,7 +47,8 @@ println("best chi2 for model M1: ", minimum(chi2_M1))
 delta_θ1 = gridθ1[2]-gridθ1[1];
 delta_θ2 = gridθ2[2]-gridθ2[1];
 logZ1 = log(delta_θ1*delta_θ2) + logsumexp(-0.5*chi2_M1)
-println("log Z1 = ", logZ1);
+k=2
+println("log Z1 = ", logZ1, " AIC= ", minimum(chi2_M0)+2*k, " BIC=  ", minimum(chi2_M0)+k*log(n));
 
 # 3D grid search, MODEL M2: parabolic law
 gridθ1= linspace(0,1, 301);
@@ -74,4 +73,5 @@ delta_θ1 =gridθ1[2]-gridθ1[1];
 delta_θ2 =gridθ2[2]-gridθ2[1];
 delta_θ3 =gridθ3[2]-gridθ3[1];
 logZ2 = log(delta_θ1*delta_θ2*delta_θ3) + logsumexp(-0.5*chi2_M2)
-println("log Z2 = ", logZ2);
+k=3
+println("log Z2 = ", logZ2, " AIC= ", minimum(chi2_M0)+2*k, " BIC=  ", minimum(chi2_M0)+k*log(n));
