@@ -50,7 +50,7 @@ println("got $minchi2 at $params_opt (returned $ret)");
 x_data = zeros(1000,20);
 y_data = zeros(1000,20);
 for i=1:1000
-    indx = Int.(ceil(20*rand(20)));
+    indx = Int.(ceil.(20*rand(20)));
     x_data[i,:]= x[indx];
     y_data[i,:]= y[indx];
 end
