@@ -46,6 +46,11 @@ min_objective!(opt, chi2opt);
 (minchi2,params_opt,ret) = optimize(opt, params_init);
 println("got $minchi2 at $params_opt (returned $ret)");
 
+
+
+#
+# CLASSIC BOOTSTRAP
+#
 # Generate 1000 data sets off the 20 data plot2d_intensity_allepochs
 nboot = 10000
 x_data = zeros(nboot,20);
@@ -58,7 +63,7 @@ for i=1:nboot
     θ_data[i,:] = θ[indx];
 end
 
-# Run a 1000 model-fits
+# Run a nboot-bootstrap
 a_boot = zeros(nboot);
 b_boot = zeros(nboot);
 for i=1:nboot
@@ -88,3 +93,17 @@ end
 clf();
 ha = plt[:hist](a_boot,50) # Histogram
 hb = plt[:hist](b_boot,50) # Histogram
+
+#
+# CLASSIC JACKNIFE
+#
+nboot = 10000
+x_data = zeros(nboot,19);
+y_data = zeros(nboot,19);
+θ_data = zeros(nboot,19);
+for i=1:nboot
+    indx = (randperm(20)([1:19]);
+    x_data[i,:]= x[indx];
+    y_data[i,:]= y[indx];
+    θ_data[i,:] = θ[indx];
+end
