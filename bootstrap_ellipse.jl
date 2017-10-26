@@ -37,7 +37,7 @@ scatter(3*cos.(θ_all), 5*sin.(θ_all))
 using NLopt
 
 function chi2opt(params::Vector, dummy::Vector)
-    return sum( (x-params[1]*cos.(θ)).^2  + (y-params[2]*sin.(θ)).^2)/σ^2
+    return sum( (x-params[1]*cos.(θ)).^2  + (y-params[2]*sin.(θ).^2)/σ^2)
 end
 
 params_init = [0,0];
@@ -47,27 +47,44 @@ min_objective!(opt, chi2opt);
 println("got $minchi2 at $params_opt (returned $ret)");
 
 # Generate 1000 data sets off the 20 data plot2d_intensity_allepochs
-x_data = zeros(1000,20);
-y_data = zeros(1000,20);
-for i=1:1000
+nboot = 10000
+x_data = zeros(nboot,20);
+y_data = zeros(nboot,20);
+θ_data = zeros(nboot,20);
+for i=1:nboot
     indx = Int.(ceil.(20*rand(20)));
     x_data[i,:]= x[indx];
     y_data[i,:]= y[indx];
+    θ_data[i,:] = θ[indx];
 end
 
 # Run a 1000 model-fits
-a_boot = zeros(1000);
-b_boot = zeros(1000);
-for i=1:1000
+a_boot = zeros(nboot);
+b_boot = zeros(nboot);
+for i=1:nboot
     # magic
-    params_init = [0,0];
-    function chi2opt(params::Vector, dummy::Vector)
-        return sum( (x_data[i,:]-params[1]*cos.(θ)).^2  + (y_data[i,:]-params[2]*sin.(θ)).^2)/σ^2
-    end
-    min_objective!(opt, chi2opt);
+    params_init = [10,10];
+    opt = Opt(:LN_NELDERMEAD, 2);
+    #lower_bounds!(opt, [0., 0.])
+    min_objective!(opt, (params::Vector, dummy::Vector)->sum( (x_data[i,:]-params[1]*cos.(θ_data[i,:])).^2  + (y_data[i,:]-params[2]*sin.(θ_data[i,:])).^2)/σ^2);
     (minchi2,params_opt,ret) = optimize(opt, params_init);
     a_boot[i]=params_opt[1];
     b_boot[i]=params_opt[2];
+
+    # optional debug
+    # println( (norm(x_data[i,:]-params_opt[1]*cos.(θ)).^2  + norm(y_data[i,:]-params_opt[2]*sin.(θ)).^2) /σ^2 );
+    # clf();
+    # scatter(params_opt[1]*cos.(θ_all), params_opt[2]*sin.(θ_all));
+    # scatter(x_data[i,:], y_data[i,:]);
+    # scatter(a_boot[i]*cos.(θ_all), b_boot[i]*sin.(θ_all))
+    # readline();
+
+    if(mod(i,100)==0)
+        println("Iteration:",i);
+    end
 end
 
 # Compute error bars from bootstrap
+clf();
+ha = plt[:hist](a_boot,50) # Histogram
+hb = plt[:hist](b_boot,50) # Histogram
