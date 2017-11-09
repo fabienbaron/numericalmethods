@@ -46,8 +46,6 @@ min_objective!(opt, chi2opt);
 (minchi2,params_opt,ret) = optimize(opt, params_init);
 println("got $minchi2 at $params_opt (returned $ret)");
 
-
-
 #
 # CLASSIC BOOTSTRAP
 #
