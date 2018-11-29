@@ -43,7 +43,7 @@ using SparseArrays
 nx = 64;
 o = ones(nx);
 D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
-D = [kron(spdiagm(0=>1:nx), D_1D) ;  kron(D_1D, spdiagm(0=>1:nx))];
+D = [kron(spdiagm(0=>ones(nx)), D_1D) ;  kron(D_1D, spdiagm(0=>ones(nx)))];
 DtD = D'*D;
 global mindist = 1e99;
 
