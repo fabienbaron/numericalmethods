@@ -14,7 +14,11 @@ Install the language-julia Atom package from within the Settings/Preferences of 
 
 Install the latex-completions Atom package from within Atom: this enables the autocompletion of LaTeX symbols (α, β, ...)
 
-## Julia OSX first steps
+### PyPlot setup for Windows and Linux
+
+Under Windows and Linux, launch Julia, press ```]``` to trigger the package manager then type ```add PyPlot```.
+
+### PyPlot setup for OSX
 Installing the PyPlot julia plotting library on OSX can be a bit tricky.
 All the details are here if you need: https://github.com/JuliaPy/PyPlot.jl but here is a summary:
 
@@ -40,6 +44,7 @@ Then go to Julia and type ```ENV["PYTHON"]="/usr/local/bin/python"```.
 
 After any of these paths, go to the package manager ```]``` and type ```add PyCall```, then ```add PyPlot```.
 
+#
 ## Check that you can use the REPL
 
 1. Launch julia from the command line.
