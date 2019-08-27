@@ -4,7 +4,7 @@ This class will use the Julia programming language as well as Python's matplotli
 
 ## Prerequisites
 
-## Julia setup
+## Julia and Atom setup
 
 Install the latest Julia from https://julialang.org/downloads/
 
