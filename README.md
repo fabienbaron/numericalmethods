@@ -30,7 +30,7 @@ Path 1: you've already got your own python installation and want to use it for t
 
 Path 2: you don't have a python installation  and just want the default Julia on, go to Julia and type ```ENV["PYTHON"]=""```
 
-Path 3: you want to install your own python from scratch, using HomeBrew https://brew.sh/. This is the most complicated way, and slow, but a surer way to have it work.
+Path 3: you want to install your own python from scratch, using HomeBrew https://brew.sh/. This is the most complicated way, but would enable you to expand python libraries and call them from Julia later (not needed for the class).
 ```
 brew install python gcc freetype pyqt
 brew link --force freetype
