@@ -46,17 +46,12 @@ After any of these paths, go to the package manager ```]``` and type ```add PyCa
 
 There are multiple backends (GUI frameworks) that can be used to display the plotting windows drawn by PyPlot.
 The default may not work for you, and may even trigger your lock screen by crashing the desktop manager.
-In this case, you can try to force the backend *before* loading PyPlot.
+A reliable backend is the one based on Qt. Just run the following and PyPlot will install the necessary libraries:
 ```
 ENV["MPLBACKEND"]="qt5agg"
 using PyPlot
 plot(rand(100))
 ```
-Possible backends are ```qt5agg```, ```tkagg```.
-
-To permanently store the best backend create a file called ```~/.config/matplotlibrc``` with one line ```backend: Qt5Agg``` or ```backend: TkAgg```.
-
-
 
 #
 ## Check that you can use the REPL
