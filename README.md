@@ -39,10 +39,24 @@ export PYTHONPATH="/usr/local/lib/python2.7:$PYTHONPATH"
 pip install numpy scipy matplotlib
 ```
 Then edit your ~/.profile to add the two export lines.
-Create a file called ```~/.config/matplotlibrc``` with one line ```backend: Qt5Agg```.
 Then go to Julia and type ```ENV["PYTHON"]="/usr/local/bin/python"```.
-
 After any of these paths, go to the package manager ```]``` and type ```add PyCall```, then ```add PyPlot```.
+
+### OSX backend selection
+
+There are multiple backends (GUI frameworks) that can be used to display the plotting windows drawn by PyPlot.
+The default may not work for you, and may even trigger your lock screen by crashing the desktop manager.
+In this case, you can try to force the backend before loading
+```
+ENV["MPLBACKEND"]="qt5agg"
+using PyPlot
+plot(rand(100))
+```
+Possible backends are ```qt5agg```, ```tkagg```.
+
+To permanently store the best backend create a file called ```~/.config/matplotlibrc``` with one line ```backend: Qt5Agg``` or ```backend: TkAgg```.
+
+
 
 #
 ## Check that you can use the REPL
