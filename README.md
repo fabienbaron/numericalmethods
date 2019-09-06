@@ -19,39 +19,12 @@ Install the latex-completions Atom package from within Atom: this enables the au
 Under Windows and Linux, launch Julia, press ```]``` to trigger the package manager then type ```add PyPlot```.
 
 ### PyPlot setup for OSX
-Installing the PyPlot julia plotting library on OSX can be a bit tricky.
-All the details are here if you need: https://github.com/JuliaPy/PyPlot.jl but here is a summary:
-
-Mac users will need to have XQuartz installed first.
-Then there are three possible paths:
-
-Path 1: you've already got your own python installation and want to use it for this course, go to julia and type ```ENV["PYTHON"]="/pathto/python"``` where ```pathto``` is your actual path (check with ```which python``` from terminal).
-
-
-Path 2: you don't have a python installation  and just want the default Julia on, go to Julia and type ```ENV["PYTHON"]=""```
-
-Path 3: you want to install your own python from scratch, using HomeBrew https://brew.sh/. This is the most complicated way, but would enable you to expand python libraries and call them from Julia later (not needed for the class).
+To use the default python within Julia, type :
 ```
-brew install python gcc freetype pyqt
-brew link --force freetype
-export PATH="/usr/local/bin:$PATH"
-export PYTHONPATH="/usr/local/lib/python2.7:$PYTHONPATH"
-pip install numpy scipy matplotlib
-```
-Then edit your ~/.profile to add the two export lines.
-Then go to Julia and type ```ENV["PYTHON"]="/usr/local/bin/python"```.
-After any of these paths, go to the package manager ```]``` and type ```add PyCall```, then ```add PyPlot```.
-
-### OSX backend selection
-
-There are multiple backends (GUI frameworks) that can be used to display the plotting windows drawn by PyPlot.
-The default may not work for you, and may even trigger your lock screen by crashing the desktop manager.
-A reliable backend is the one based on Qt. Just run the following and PyPlot will install the necessary libraries:
-```
+ENV["PYTHON"]=""
 ENV["MPLBACKEND"]="qt5agg"
-using PyPlot
-plot(rand(100))
 ```
+Then go to the package manager ```]``` and type ```add PyCall```, then ```add PyPlot```.
 
 #
 ## Check that you can use the REPL
