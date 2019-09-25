@@ -79,3 +79,11 @@ scatter(reg,chi2)
 xlabel("Regularization")
 ylabel("Chi2")
 imview3(x0,y,xopt,figtitle="Total squared variation regularization");
+
+
+function matrix_to_vector(input)
+    #Converts the input matrix to a vector by stacking the rows in a specific way explained here
+    # ouput_vector -- a column vector with size input.shape[0]*input.shape[1]
+    # flip the input matrix up-down because last row should go first
+    return vec(reverse(input, dims=1)')
+end
