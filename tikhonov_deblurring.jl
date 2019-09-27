@@ -2,10 +2,10 @@ using FITSIO, LinearAlgebra, Printf, MatrixDepot, SparseArrays
 include("view.jl")
 x0=read(FITS("saturn64.fits")[1]);nx=size(x0,1)
 x0 = vec(x0); # note: x0 is a 2D array, but we will work with vectors
-sigma= maximum(x0)/2*rand(Float64, size(x0))
+sigma= maximum(x0)/5*rand(Float64, size(x0))
 
-A = matrixdepot("blur", 64)
-y = A*x0 + sigma.*randn(Float64,size(x0));
+A = matrixdepot("blur", Float64, 64, 3, 2.0, true)
+y = A*x0 + sigma.*randn(Float64,size(x0);
 Σ=Diagonal(1.0./sigma.^2); # covariance matrix
 
 # Classic Tikhonov "rdige regression"
