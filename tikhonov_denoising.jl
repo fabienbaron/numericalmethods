@@ -35,7 +35,7 @@ for i=1:nλ
         global mindist = deepcopy(dist);
         global xopt = deepcopy(x);
     end
-    @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n", i, λ[i], obj[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
+    @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n",  i, obj[i], λ[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
     imview(reshape(x, (nx,nx)))
     #readline();
 end
@@ -97,7 +97,7 @@ for i=1:nλ
         global mindist = deepcopy(dist);
         global xopt = deepcopy(x);
     end
-    @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n", i, λ[i], obj[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
+    @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n",  i, obj[i], λ[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
     imview(reshape(x, (nx,nx)))
     #readline();
 end
