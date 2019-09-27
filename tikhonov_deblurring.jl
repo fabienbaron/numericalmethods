@@ -6,7 +6,7 @@ sigma= maximum(x0)/5*rand(Float64, size(x0))
 
 A = matrixdepot("blur", Float64, 64, 3, 2.0, true)
 y = A*x0 + sigma.*randn(Float64,size(x0);
-Σ=Diagonal(1.0./sigma.^2); # covariance matrix
+Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
 # Classic Tikhonov "rdige regression"
 λ = 10.0.^(range(-6,5,length=101));
