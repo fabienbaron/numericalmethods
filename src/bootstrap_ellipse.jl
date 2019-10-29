@@ -14,6 +14,19 @@ scatter(3*cos.(θ_all), 5*sin.(θ_all))
 # Given data (x,y), estimate a and b
 
 # Grid sample for a and b
+using PyPlot
+# Generate data
+θ=rand(20)*2*pi;
+a = 3
+b = 5
+σ = 0.5
+x=a*cos.(θ)+σ*randn(20); y = b*sin.(θ)+σ*randn(20);
+scatter(x,y);
+
+#Visualize the true ellipse
+θ_all=range(-pi,pi,length=1000)
+scatter(3*cos.(θ_all), 5*sin.(θ_all))
+
 
  a = collect(range(0, 8, length=400));
  b = collect(range(0, 8, length=400));
@@ -24,18 +37,19 @@ scatter(3*cos.(θ_all), 5*sin.(θ_all))
          chi2[i,j] = sum( (x-a[i]*cos.(θ)).^2  + (y-b[j]*sin.(θ)).^2)/σ^2
      end
  end
+
  minsol = findmin(chi2)
  minchi2 = minsol[1]
  println("Minimun chi2 = ", minchi2," at: a=", a[minsol[2][1]], " b = ", b[minsol[2][2]])
  clf(); imshow(rotl90(chi2),interpolation="none");
  xlabel("a");ylabel("b");
- imshow(rotl90(chi2.>(minchi2+1.0)),interpolation="none");
- rangea = findall(vec(sum(chi2.<(minsol[1]+1.0), dims=2)).>0)
- rangeb = findall(vec(sum(chi2.<(minsol[1]+1.0), dims=1)).>0)
+ imshow(rotl90(chi2.>(minchi2+1.38)),interpolation="none");
+ rangea = findall(vec(sum(chi2.<(minsol[1]+1.38), dims=2)).>0)
+ rangeb = findall(vec(sum(chi2.<(minsol[1]+1.38), dims=1)).>0)
  a[rangea]
  b[rangeb]
- print("a = ", a[minsol[2][1]], " + ", maximum(a[rangea])-a[minsol[2][1]] , "- ",  a[minsol[2][1]]-minimum(a[rangea]))
- print("b = ", b[minsol[2][2]], " + ", maximum(b[rangeb])-b[minsol[2][2]] , "- ",  b[minsol[2][2]]-minimum(b[rangeb]))
+ print("a = ", a[minsol[2][1]], " + ", (maximum(a[rangea])-a[minsol[2][1]])/(2.355)*2 , "- ",  (a[minsol[2][1]]-minimum(a[rangea]))/2.355*2)
+ print("b = ", b[minsol[2][2]], " + ", (maximum(b[rangeb])-b[minsol[2][2]])/(2.355)*2 , "- ",  (b[minsol[2][2]]-minimum(b[rangeb]))/2.355*2)
 
 
 # Estimate best (a,b) with NLopt
@@ -59,6 +73,7 @@ nboot = 10000
 x_data = zeros(nboot,20);
 y_data = zeros(nboot,20);
 θ_data = zeros(nboot,20);
+
 for i=1:nboot
     indx = Int.(ceil.(20*rand(20)));
     x_data[i,:]= x[indx];
@@ -108,13 +123,16 @@ FWHM_low = center - (ha[2][indx_HM_left]+ha[2][indx_HM_left+1])/2
 FWHM_high = (ha[2][indx_HM_right]+ha[2][indx_HM_right+1])/2 - center
 σ_low =  FWHM_low / (2*sqrt(2*log(2))) # Assuming left ~ Gaussian
 σ_high = FWHM_high / (2*sqrt(2*log(2))) # Assuming right ~ Gaussian
+
 #
 # CLASSIC JACKNIFE
 #
-nboot = 10000
-x_data = zeros(nboot,19);
-y_data = zeros(nboot,19);
-θ_data = zeros(nboot,19);
+using Random
+njack = 10000
+x_data = zeros(njack,19);
+y_data = zeros(njack,19);
+θ_data = zeros(njack,19);
+
 for i=1:nboot
     indx = (randperm(20)([1:19]);
     x_data[i,:]= x[indx];

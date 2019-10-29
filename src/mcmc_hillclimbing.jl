@@ -5,11 +5,11 @@ f_ack=(x,y)->-20*exp.(-0.2*sqrt.(0.5*(x.^2+y.^2)))-exp.(0.5*(cos.(2*π*x)+cos.(2
 a=1; b=100;
 f_ros=(x,y)->(a .- x).^2 + b*(y - x.^2).^2;
 
-rr = collect(range(-5,5,length=1001));
+rr = collect(range(-3,3,length=1001));
 yy = repeat(rr,1,1001);
 xx = yy';
 
-fmap = f_ack(xx,yy)
+fmap = f_ros(xx,yy)
 # Plots
 
 clf();imshow(fmap)
@@ -25,20 +25,20 @@ scatter((θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1, color=:blue)
 stepsize = 10.0
 # Initialize Markov Chain
 for i=2:niter
-δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5);
-θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0)
+    δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5);
+    θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0)
 
-f_current = f_ack(θ[i-1,1], θ[i-1,2]) ; # f at current location
-f_trial = f_ack(θ_trial[1], θ_trial[2]) # f at tentative location
+    f_current = f_ros(θ[i-1,1], θ[i-1,2]) ; # f at current location
+    f_trial = f_ros(θ_trial[1], θ_trial[2]) # f at tentative location
 
-if(f_trial < f_current) # improvement !
-    θ[i,:] = θ_trial # accept move
-    scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:white)
-else
-    θ[i,:] = θ[i-1,:] # reject move, stay where we are
-    scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red)
-end
+    if(f_trial < f_current) # improvement !
+        θ[i,:] = θ_trial # accept move
+        scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:white)
+    else
+        θ[i,:] = θ[i-1,:] # reject move, stay where we are
+        scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red)
+    end
 #scatter((θ[i,1]+5)*100+1,(θ[i,2]+5)*100+1, color=:black)
 end
 
-f_ack(θ[niter,1],θ[niter,1])
+f_ros(θ[niter,1],θ[niter,2])
