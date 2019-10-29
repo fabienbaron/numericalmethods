@@ -9,6 +9,16 @@ f_ros=x->(a .- x[1]).^2 + b*(x[2] - x[1].^2).^2;
 # # Plots
 # clf();imshow(fmap.^.2)
 g_ros = x -> [-2*(a .- x[1]) - 4b*x[1].*(x[2] .- x[1] .^2), 2b*(x[2] .- x[1].^2)]
+
+function linesearch(x_current, g_current)
+α_try = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10., 100., 1000.]
+fval = zeros(length(α_try))
+for i=1:length(α_try)
+fval[i] = f_ros(x_current - α_try[i] * g_current)
+end
+return α_try[findmin(fval)[2]]
+end
+
 N=400
 f = zeros(N)
 x = zeros(N, 2)
@@ -20,13 +30,4 @@ for i=2:N
     α = linesearch(x[i-1,:], g_ros(x[i-1,:]))
     x[i,:] = x[i-1,:] - α* g_ros(x[i-1,:])
     f[i] = f_ros(x[i,:])
-end
-
-function linesearch(x_current, g_current)
-α_try = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10., 100., 1000.]
-fval = zeros(length(α_try))
-for i=1:length(α_try)
-fval[i] = f_ros(x_current - α_try[i] * g_current)
-end
-return α_try[findmin(fval)[2]]
 end
