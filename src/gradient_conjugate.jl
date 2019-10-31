@@ -19,11 +19,11 @@ using LinearAlgebra
 # inv(h_ros(x[1,:])) =  [ 1 2]
 #                       [ 3 4]
 
-function linesearch(x_current, g_current)
+function linesearch(x_current, d_current)
 α_try = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10., 100., 1000.]
 fval = zeros(length(α_try))
 for i=1:length(α_try)
-fval[i] = f_ros(x_current - α_try[i] * g_current)
+fval[i] = f_ros(x_current - α_try[i] * d_current)
 end
 return α_try[findmin(fval)[2]]
 end
@@ -31,14 +31,22 @@ end
 N=100
 f = zeros(N)
 x = zeros(N, 2)
+g = zeros(N, 2)
+d = zeros(N, 2)
+β = zeros(N)
 x[1,:] .= 10*rand(2).-5
 f[1] = f_ros(x[1,:])
+g[1,:] = g_ros(x[1,:])
+d[1,:] = - g[1,:]
 
 α=1e-4;
 for i=2:N
-    α = linesearch(x[i-1,:], g_ros(x[i-1,:]))
-    x[i,:] = x[i-1,:] - α* g_ros(x[i-1,:])
-    f[i] = f_ros(x[i,:])
+    g[i,:] = g_ros(x[i-1,:]);
+    β[i] = norm(g[i,:])/norm(g[i-1,:]);
+    d[i,:] = -g[i,:] + β[i]*d[i-1,:];
+    α = linesearch(x[i-1,:], d[i,:]);
+    x[i,:] = x[i-1,:] - α * d[i,:];
+    f[i] = f_ros(x[i,:]);
 end
 rr = collect(range(-5,5,length=1000));
 map = [f_ros([i,j]) for i in rr for j in rr]
