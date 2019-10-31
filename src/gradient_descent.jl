@@ -10,6 +10,15 @@ f_ros=x->(a .- x[1]).^2 + b*(x[2] - x[1].^2).^2;
 # clf();imshow(fmap.^.2)
 g_ros = x -> [-2*(a .- x[1]) - 4b*x[1].*(x[2] .- x[1] .^2), 2b*(x[2] .- x[1].^2)]
 
+h_ros = [ ax+y     x^2+b   ]
+        [  by+x^2     y^2+x^2   ]
+
+h_ros(x[1,:]) = [ 0.1   3.4 ]
+                [ 3.5   -1.3]
+using LinearAlgebra
+inv(h_ros(x[1,:])) =  [ 1 2]
+                      [ 3 4]
+
 function linesearch(x_current, g_current)
 α_try = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10., 100., 1000.]
 fval = zeros(length(α_try))
