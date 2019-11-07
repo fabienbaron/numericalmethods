@@ -52,3 +52,17 @@ rr = collect(range(-5,5,length=1000));
 map = [f_ros([i,j]) for i in rr for j in rr]
 imshow(reshape(map.^.2,(1000,1000)))
 scatter((x[:,1].+5)*100, (x[:,2].+5)*100)
+
+α=1e-4;
+for i=2:N
+    g[i,:] = g_ros(x[i-1,:]);
+    β[i] = norm(g[i,:])/norm(g[i-1,:]);
+    d[i,:] = -g[i,:] + β[i]*d[i-1,:];
+    α = linesearch(x[i-1,:], d[i,:]);
+    x[i,:] = x[i-1,:] - α * d[i,:];
+    f[i] = f_ros(x[i,:]);
+end
+rr = collect(range(-5,5,length=1000));
+map = [f_ros([i,j]) for i in rr for j in rr]
+imshow(reshape(map.^.2,(1000,1000)))
+scatter((x[:,1].+5)*100, (x[:,2].+5)*100)
