@@ -20,14 +20,14 @@ end
 
 global mindist = 1e99;
 
-μ = 1e-3   ;
+μ = 1  ;
 
 # initialization
 x = deepcopy(y)
 z = ∇*x
 ρ = 1;
 
-for iter=1:20
+for iter=1:200
 # x subproblem
 global x=(H'*Σ*H+ρ*∇'*∇)\(H'*Σ*y+ρ*∇'*z); # should minimize 0.5*norm(H*x-y,2)^2+0.5*ρ*norm(z-∇*x,2)^2
 # z subproblem
@@ -42,15 +42,4 @@ println("chi2 = ", chi2, " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
 global ρ = 1.5*ρ
 
 end
-
 imview(reshape(x,(64,64)))
-
-    #obj[i] = chi2[i] + λ[i]*reg[i];
-    # dist = norm(x-x_truth,1);
-    # if dist<mindist
-    #     global mindist = deepcopy(dist);
-    #     global xopt = deepcopy(x);
-    # end
-    # @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n", i, obj[i], λ[i],  chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
-    # imview(reshape(x, (nx,nx)))
-    # readline();
