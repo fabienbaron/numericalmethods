@@ -15,43 +15,35 @@ o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
 ∇ = [kron(spdiagm(0=>ones(nx)), D_1D) ;  kron(D_1D, spdiagm(0=>ones(nx)))];
 
 function prox_l1(z,α)
-return sign.(z).*max.(z.-α,0)
+return sign.(z).*max.(abs.(z).-α,0)
 end
 
-
-λ = 10.0.^(range(-6,5,length=101));
-nλ = length(λ);
-global mindist = 1e99;
-global chi2 = zeros(nλ);
-global reg =  zeros(nλ);
-global obj =  zeros(nλ);
 global mindist = 1e99;
 
-μ = 1e-7;
+μ = 1e-3   ;
 
 # initialization
 x = deepcopy(y)
 z = ∇*x
-ρ = 0.01;
+ρ = 1;
 
-for iter=1:50
+for iter=1:20
 # x subproblem
-global x=(H'*Σ*H+ρ*∇'*∇)\(H'*Σ*y+ρ*∇'*z);
-
+global x=(H'*Σ*H+ρ*∇'*∇)\(H'*Σ*y+ρ*∇'*z); # should minimize 0.5*norm(H*x-y,2)^2+0.5*ρ*norm(z-∇*x,2)^2
 # z subproblem
-z0 = ∇*x; α = μ/ρ
-global z = prox_l1(z0,α);
+global z = prox_l1(∇*x,μ/ρ); # should minimize μ*norm(z,1)+0.5*ρ*norm(z-∇*x,2)^2
 
 chi2 = ((y-H*x)'*Σ*(y-H*x))[1]/length(y)
 reg = μ*norm(∇*x,1);
-aug = norm(z-z0,2);
-println("chi2 = ", chi2, " reg= ", reg, " aug= ", aug);
+aug = norm(z-∇*x,2)^2;
+println("chi2 = ", chi2, " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
 
 # increase ρ
-global ρ = 1.2*ρ
+global ρ = 1.5*ρ
 
 end
 
+imview(reshape(x,(64,64)))
 
     #obj[i] = chi2[i] + λ[i]*reg[i];
     # dist = norm(x-x_truth,1);
