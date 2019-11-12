@@ -27,14 +27,13 @@ end
 
 global mindist = 1e99;
 
-μ = 3;
-
+μ = 1.0;
 # initialization
 x = deepcopy(y)
 z = ∇*x
-ρ = 1;
+ρ = 0.001;
 
-for iter=1:20
+for iter=1:50
 # x subproblem
 global x=(H'*Σ*H+ρ*∇'*∇)\(H'*Σ*y+ρ*∇'*z); # should minimize 0.5*norm(H*x-y,2)^2+0.5*ρ*norm(z-∇*x,2)^2
 # z subproblem
