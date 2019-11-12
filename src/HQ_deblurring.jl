@@ -1,13 +1,17 @@
 using FITSIO, LinearAlgebra, Printf, MatrixDepot, SparseArrays
 include("view.jl")
-#x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
-#x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
-nx = 64
-x_truth = zeros(nx,nx)
-x_truth[10:15,34:54] .= 5.0
-x_truth[26:35,14:24] .= 8.0
-x_truth[37:60,10:24] .= 9.0
-x_truth = vec(x_truth)
+
+# x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
+# x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
+
+
+# Square patches
+ nx = 64
+ x_truth = zeros(nx,nx)
+ x_truth[10:15,34:54] .= 5.0
+ x_truth[26:35,14:24] .= 8.0
+ x_truth[37:60,10:24] .= 9.0
+ x_truth = vec(x_truth)
 
 sigma= maximum(x_truth)/10*rand(Float64, size(x_truth))
 
@@ -27,7 +31,7 @@ end
 
 global mindist = 1e99;
 
-μ = 1.0;
+μ = 1.0;  # use 0.03 for saturn, 1.0 for the square patches
 # initialization
 x = deepcopy(y)
 z = ∇*x
