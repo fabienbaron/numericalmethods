@@ -1,4 +1,19 @@
 using FITSIO, LinearAlgebra, Printf, MatrixDepot, SparseArrays, Wavelets
+include("view.jl")
+
+# Square patches
+ nx = 64; x_truth = zeros(nx,nx);
+ x_truth[10:15,34:54] .= 5.0;
+ x_truth[26:35,14:24] .= 8.0;
+ x_truth[37:60,10:24] .= 9.0;
+ x_truth = vec(x_truth);
+
+
+ x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
+ x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
+
+
+
 #
 # Wavelet choice
 #
@@ -29,20 +44,13 @@ WtW =I; # Wt(W(x)) ./ x
 
 # Check that L2 norm is conserved ||Wx||_2 = ||x||_2
 # this implies we cannot use Tikhonov and get useful results
-[norm(W(x)[:,i],2) for i=1:nwav]
+norm(x_truth,2), [norm(W(x_truth)[:,i],2) for i=1:nwav]
 
 
-# Square patches
- nx = 64
- x_truth = zeros(nx,nx)
- x_truth[10:15,34:54] .= 5.0
- x_truth[26:35,14:24] .= 8.0
- x_truth[37:60,10:24] .= 9.0
- x_truth = vec(x_truth)
 
-sigma= maximum(x_truth)/10*rand(Float64, size(x_truth))
+sigma= maximum(x_truth)/10*rand(Float64, size(x_truth));
 
-H = matrixdepot("blur", Float64, nx, 3, 2.0, true)
+H = matrixdepot("blur", Float64, nx, 3, 2.0, true);
 y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
@@ -51,7 +59,7 @@ return sign.(z).*max.(abs.(z).-α,0)
 end
 
 global mindist = 1e99;
-μ = 1.0;  # use 0.03 for saturn, 1.0 for the square patches
+μ = 0.06;  # use 0.03 for saturn, 1.0 for the square patches
 # initialization
 x = deepcopy(y)
 z = W(x)

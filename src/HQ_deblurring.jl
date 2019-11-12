@@ -20,7 +20,7 @@ y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
 #
-# Total squared variation
+# Spatial gradient matrix for total variation
 #
 o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
 ∇ = [kron(spdiagm(0=>ones(nx)), D_1D) ;  kron(D_1D, spdiagm(0=>ones(nx)))];
