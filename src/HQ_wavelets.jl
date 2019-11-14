@@ -12,12 +12,18 @@ include("view.jl")
  x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
  x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
 
+# Example of transform
+wt = wavelet(WT.cdf97, WT.Lifting)
+xt = dwt(reshape(x_truth,nx,nx), wt, 1)
+imview(xt)
 
 
 #
 # Wavelet choice
 #
 wavelet_bases = [WT.haar, WT.db1, WT.db2, WT.db3, WT.db4, WT.db5, WT.db6, WT.db7, WT.db8];
+
+
 nwav = length(wavelet_bases)
 
 function W(mat)
