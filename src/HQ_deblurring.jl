@@ -19,6 +19,17 @@ H = matrixdepot("blur", Float64, nx, 3, 2.0, true)
 y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
+
+# H = F D F'
+#F' H x = D F' x
+# x_truth = fft(ones(64,64))
+#D=(((fftshift(ifft(reshape(H*vec(x_truth),64,64)))./(fftshift(ifft(reshape(x_truth,64,64)))))))
+#D[1,:].=0.0
+
+C = vec((((ifft(reshape(H[2567,:],64,64))))))
+
+
+
 #
 # Spatial gradient matrix for total variation
 #

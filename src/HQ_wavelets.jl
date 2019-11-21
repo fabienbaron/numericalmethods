@@ -14,7 +14,7 @@ include("view.jl")
 
 # Example of transform
 wt = wavelet(WT.cdf97, WT.Lifting)
-xt = dwt(reshape(x_truth,nx,nx), wt, 1)
+xt = dwt(reshape(x_truth,nx,nx), wt)
 imview(xt)
 
 
@@ -65,7 +65,7 @@ return sign.(z).*max.(abs.(z).-α,0)
 end
 
 global mindist = 1e99;
-μ = 0.06;  # use 0.03 for saturn, 1.0 for the square patches
+μ = 1.0;#0.06;  # use 0.06 for saturn, 1.0 for the square patches
 # initialization
 x = deepcopy(y)
 z = W(x)
