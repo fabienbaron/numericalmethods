@@ -53,13 +53,22 @@ x2=circshift(x1,(5,-8))+randn(64,64)
 function correlate(a::Array{Float64,2}, b::Array{Float64,2}) #convention, using fftshift
     return real.(fftshift(ifft(fft(a).*conj(fft(b)))));
 end
+fig = figure()
 imshow(correlate(x1,x1)); # Autocorrelation
 locmax1 = findmax(correlate(x1,x1))[2] ; # maximum is at the center
 
 imshow(correlate(x1,x2)); # Cross-correlation of x1 with x2
 locmax2 = findmax(correlate(x1,x2))[2] ; # maximum is not at the center
-print("Estimated shift: ",locmax2 - locamax1);
+print("Estimated shift: ",locmax1 - locmax2);
 
 # convolution
 
-# shift
+# shift (subpixel shifts are possible !)
+yy = repeat(collect(range(1, 64, length=64)).-32, 1, 64);
+xx = yy';
+cis.(0.1*xx) # cis(ϕ) is just exp(iϕ)
+shifted_image = real.(ifft(fftshift(cis.(0.1*xx)).*fft(image)))
+fig=figure("Image Shifting via FFT")
+subplot(121); imshow(image); title("Original")
+subplot(122); imshow(shifted_image); title("Shifted")
+tight_layout()
