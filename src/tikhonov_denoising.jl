@@ -13,7 +13,7 @@ chi2 = norm((y-x0)./sigma)^2 # using the l2 norm squared
 chi2 = (y-x0)'*Σ*(y-x0) # the matricial form for any sigma
 chi2r = chi2/length(y)
 
-# Classic Tikhonov "rdige regression"
+# Classic Tikhonov "ridge regression"
 λ = 10.0.^(range(-10,15,length=201));
 nλ = length(λ);
 global mindist = 1e99;
@@ -36,7 +36,7 @@ for i=1:nλ
         global xopt = deepcopy(x);
     end
     @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n",  i, obj[i], λ[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
-    imview(reshape(x, (nx,nx)))
+    #imview(reshape(x, (nx,nx)))
     #readline();
 end
 
@@ -59,7 +59,7 @@ plot(chi2, reg)
 fig = figure("U Curve",figsize=(15,5))
 plot(1:nλ, 1.0./chi2+ 1.0./reg)
 gca().set_yscale("log")
-gca().set_xscale("log")
+gca().set_xscale("linear")
 xlabel("Iterations")
 ylabel("1/χ2(x) + 1/R(x)")
 
@@ -98,7 +98,7 @@ for i=1:nλ
         global xopt = deepcopy(x);
     end
     @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n",  i, obj[i], λ[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
-    imview(reshape(x, (nx,nx)))
+    #imview(reshape(x, (nx,nx)))
     #readline();
 end
 
