@@ -16,7 +16,7 @@ Install the latex-completions Atom package from within Atom: this enables the au
 
 ### PyPlot setup for Windows and Linux
 
-Under Windows and Linux, launch Julia, press ```]``` to trigger the package manager then type ```add PyPlot```.
+Under Windows and Linux, launch Julia, press ```]``` to open its package manager then type ```add PyPlot```.
 
 ### PyPlot setup for OSX
 To use the default python within Julia, type :
