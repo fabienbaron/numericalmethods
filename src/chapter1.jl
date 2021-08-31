@@ -11,6 +11,7 @@ var(x)
 mean(d)
 median(d)
 var(d)
+support(d)
 
 #PDF and CDF
 pdf(d,0.3)
