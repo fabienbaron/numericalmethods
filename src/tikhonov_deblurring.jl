@@ -15,7 +15,7 @@ mindist = 1e99;
 chi2 = zeros(nλ);
 reg =  zeros(nλ);
 obj =  zeros(nλ);
-
+xopt = Float64[]
 #A = I;
 Γ = I;
 
@@ -41,12 +41,14 @@ imview3(x0,y,xopt,figtitle="Tikhonov regularization");
 #
 # Total squared variation
 #
-o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
+o = ones(nx);
+D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
+#D_1D = spdiagm(-1=>o[1:nx-1],0=>-2*o,  1=>o[1:nx-1])
 ∇ = [kron(spdiagm(0=>ones(nx)), D_1D) ;  kron(D_1D, spdiagm(0=>ones(nx)))];
 #A = I;
 Γ = ∇;
 
-global mindist = 1e99;
+mindist = 1e99;
 for i=1:nλ
     x=(A'*Σ*A+λ[i]*Γ'*Γ)\(A'*Σ*y);
     x = x.*(x.>0)

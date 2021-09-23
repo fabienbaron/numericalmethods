@@ -20,7 +20,7 @@ mindist = 1e99;
 chi2 = zeros(nλ);
 reg =  zeros(nλ);
 obj =  zeros(nλ);
-
+xopt = Float64[]
 A = I;
 Γ = I;
 
@@ -85,7 +85,7 @@ o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
 A = I;
 Γ = ∇;
 
- mindist = 1e99;
+mindist = 1e99;
 for i=1:nλ
     x=(A'*Σ*A+λ[i]*Γ'*Γ)\(A'*Σ*y);
     x = x.*(x.>0)

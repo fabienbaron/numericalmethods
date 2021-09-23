@@ -33,12 +33,25 @@ norm(reshape(∇*x_truth,(64,128))-reshape(f∇(x_truth), (64,128)))
 #
 # Same for convolution
 #
-#sh = Array(H[2,:]); fsh = fft(reshape(sh,nx,nx));
-#fH = X -> real.(ifft(fsh.*fft(reshape(X,nx,nx))));
+# sh = Array(H[1,:]); fsh = fft(reshape(sh,nx,nx));
+# fH = X -> real.(ifft(fsh.*fft(reshape(X,nx,nx))));
+# imshow(fH(x_truth))
 #
-# sh = vec(Array(H[32,:])); fsh = fft(sh);
-# fH = X -> real.(ifft(fsh.*fft(X)));
-#
-#
-# imshow(reshape(fH(x_truth), nx, nx))
-# imshow(reshape(H*x_truth, nx, nx))
+# fsh2 = fft(sh);
+# fH2 = X -> real.(ifft(fsh2.*fft(X)));
+# imshow(reshape(fH2(x_truth), nx, nx))
+
+imshow(reshape(H*x_truth, nx, nx))
+x_test = zeros(nx*nx); x_test[64*32+32] = 1;
+fsh = fft(H*x_test)./fft(x_test);
+fH = X -> real.(ifft(fsh.*fft(X)));
+fHt = G -> real(ifft( conj(fsh).*fft(G)));
+fHtH = X -> real(ifft( abs2.(fsh).*fft(X)));
+#imshow(reshape(fH(x_truth), nx, nx))
+
+# Matrix math
+x_sol = (H'*H)\(H'*y) #will be slow with large images
+imshow(reshape(x_sol, nx, nx))
+
+# FFT math
+x = real(ifft( fft(H'*y)./abs2.(fsh) ))
