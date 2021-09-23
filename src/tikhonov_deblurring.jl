@@ -5,16 +5,16 @@ x0 = vec(x0); # note: x0 is a 2D array, but we will work with vectors
 sigma= maximum(x0)/5*rand(Float64, size(x0))
 
 A = matrixdepot("blur", Float64, 64, 3, 2.0, true)
-y = A*x0 + sigma.*randn(Float64,size(x0);
+y = A*x0 + sigma.*randn(Float64,size(x0));
 Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
 # Classic Tikhonov "rdige regression"
 λ = 10.0.^(range(-6,5,length=101));
 nλ = length(λ);
-global mindist = 1e99;
-global chi2 = zeros(nλ);
-global reg =  zeros(nλ);
-global obj =  zeros(nλ);
+mindist = 1e99;
+chi2 = zeros(nλ);
+reg =  zeros(nλ);
+obj =  zeros(nλ);
 
 #A = I;
 Γ = I;
@@ -27,8 +27,8 @@ for i=1:nλ
     obj[i] = chi2[i] + λ[i]*reg[i];
     dist = norm(x-x0,1);
     if dist<mindist
-        global mindist = deepcopy(dist);
-        global xopt = deepcopy(x);
+        mindist = deepcopy(dist);
+        xopt = deepcopy(x);
     end
     @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n", i, obj[i], λ[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
     imview(reshape(x, (nx,nx)))
@@ -55,13 +55,11 @@ for i=1:nλ
     obj[i] = chi2[i] + λ[i]*reg[i];
     dist = norm(x-x0,1);
     if dist<mindist
-        global mindist = deepcopy(dist);
-        global xopt = deepcopy(x);
+        mindist = deepcopy(dist);
+        xopt = deepcopy(x);
     end
     @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n", i, obj[i], λ[i],  chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
     imview(reshape(x, (nx,nx)))
     #readline();
 end
-
-
 imview3(x0,y,xopt,figtitle="Total squared variation regularization");
