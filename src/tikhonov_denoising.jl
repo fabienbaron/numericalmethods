@@ -1,4 +1,4 @@
-using FITSIO, LinearAlgebra, Printf
+using FITSIO, LinearAlgebra, Printf, SparseArrays
 include("view.jl")
 x0=read(FITS("saturn64.fits")[1]);nx=size(x0,1)
 x0 = vec(x0); # note: x0 is a 2D array, but we will work with vectors
@@ -79,7 +79,6 @@ imview3(x0,y,xopt,figtitle="Tikhonov regularization");
 # Total squared variation
 #
 
-using SparseArrays
 o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
 ∇ = [kron(spdiagm(0=>ones(nx)), D_1D) ;  kron(D_1D, spdiagm(0=>ones(nx)))];
 A = I;
