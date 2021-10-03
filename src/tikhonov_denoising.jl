@@ -46,16 +46,16 @@ scatter(1:nλ, chi2)
 scatter(1:nλ, reg)
 scatter(1:nλ, λ.*reg)
 
-# Plot L curve
+# Plot L curve - best lambda to be found in the corner of the L
 fig = figure("L Curve",figsize=(15,5))
-gca().set_yscale("log")
-gca().set_xscale("log")
 xlabel("Regularization")
 ylabel("Chi2")
-plot(chi2, reg)
-
-
-# Plot U curve
+plot(reg,chi2/length(y))
+ylim([0,5])
+for i=1:nλ
+annotate(string("i=",i), (reg[i], chi2[i]/length(y)))
+end
+# Plot U curve - best lambda will be found in the U well
 fig = figure("U Curve",figsize=(15,5))
 plot(1:nλ, 1.0./chi2+ 1.0./reg)
 gca().set_yscale("log")
