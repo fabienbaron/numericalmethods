@@ -46,7 +46,8 @@ scatter(1:nλ, chi2)
 scatter(1:nλ, reg)
 scatter(1:nλ, λ.*reg)
 
-# Plot L curve - best lambda to be found in the corner of the L
+# Plot L curve - according to this metric, the best lambda is to be found in the corner of the L
+# This is the method most often used in practice
 fig = figure("L Curve",figsize=(15,5))
 xlabel("Regularization")
 ylabel("Chi2")
@@ -55,12 +56,12 @@ ylim([0,5])
 for i=1:nλ
 annotate(string("i=",i), (reg[i], chi2[i]/length(y)))
 end
-# Plot U curve - best lambda will be found in the U well
+# Plot U curve - according to this metric, best lambda should be found in the U well
 fig = figure("U Curve",figsize=(15,5))
-plot(1:nλ, 1.0./chi2+ 1.0./reg)
+plot(1:nλ, 1.0./chi2+ 1.0./(reg))
 gca().set_yscale("log")
 gca().set_xscale("linear")
-xlabel("Iterations")
+xlabel("Iteration number")
 ylabel("1/χ2(x) + 1/R(x)")
 
 # # Plot CRESO curve
