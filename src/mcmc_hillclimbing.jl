@@ -12,17 +12,18 @@ xx = yy';
 fmap = f_ros(xx,yy)
 # Plots
 
-clf();imshow(fmap)
-niter = 2000;
+clf();imshow(fmap.^.25);tight_layout()
+niter = 200;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 
 # Initial location = starting point
 θ[1,:]=10*rand(2).-5.0
 # Plot initial location
-scatter((θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1, color=:blue)
+scatter((θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1, color=:blue, s=10)
 
 stepsize = 10.0
+accepted_pos = [(θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1]
 # Initialize Markov Chain
 for i=2:niter
     δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5);
@@ -30,13 +31,14 @@ for i=2:niter
 
     f_current = f_ros(θ[i-1,1], θ[i-1,2]) ; # f at current location
     f_trial = f_ros(θ_trial[1], θ_trial[2]) # f at tentative location
-
     if(f_trial < f_current) # improvement !
         θ[i,:] = θ_trial # accept move
-        scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:white)
+        scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:white, s=10)
+        arrow(accepted_pos[1],accepted_pos[2],(θ_trial[1]+5)*100+1-accepted_pos[1],(θ_trial[2]+5)*100+1-accepted_pos[2], color=:white,shape="full", length_includes_head=true)
+        accepted_pos = [(θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1]
     else
         θ[i,:] = θ[i-1,:] # reject move, stay where we are
-        scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red)
+        scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red, s=10)
     end
 #scatter((θ[i,1]+5)*100+1,(θ[i,2]+5)*100+1, color=:black)
 end
