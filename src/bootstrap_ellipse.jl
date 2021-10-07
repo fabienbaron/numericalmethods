@@ -4,30 +4,15 @@ using PyPlot
 a = 3
 b = 5
 σ = 0.5
-x=a*cos.(θ)+σ*randn(20); y = b*sin.(θ)+σ*randn(20);
+x=a*cos.(θ).+0.1+σ*randn(20); y = b*sin.(θ).-0.2+σ*randn(20);
 scatter(x,y);
 
 #Visualize the true ellipse
 θ_all=range(-pi,pi,length=1000)
-scatter(3*cos.(θ_all), 5*sin.(θ_all))
+scatter(a*cos.(θ_all), b*sin.(θ_all))
 
 # Given data (x,y), estimate a and b
-
 # Grid sample for a and b
-using PyPlot
-# Generate data
-θ=rand(20)*2*pi;
-a = 3
-b = 5
-σ = 0.5
-x=a*cos.(θ)+σ*randn(20); y = b*sin.(θ)+σ*randn(20);
-scatter(x,y);
-
-#Visualize the true ellipse
-θ_all=range(-pi,pi,length=1000)
-scatter(3*cos.(θ_all), 5*sin.(θ_all))
-
-
  a = collect(range(0, 8, length=400));
  b = collect(range(0, 8, length=400));
  chi2 = zeros(length(a),length(b));
@@ -40,8 +25,8 @@ scatter(3*cos.(θ_all), 5*sin.(θ_all))
 
  minsol = findmin(chi2)
  minchi2 = minsol[1]
- println("Minimun chi2 = ", minchi2," at: a=", a[minsol[2][1]], " b = ", b[minsol[2][2]])
- clf(); imshow(rotl90(chi2),interpolation="none");
+ println("Minimum chi2 = ", minchi2," at: a=", a[minsol[2][1]], " b = ", b[minsol[2][2]])
+ clf(); imshow(rotl90(chi2).^.1,interpolation="none");
  xlabel("a");ylabel("b");
  imshow(rotl90(chi2.>(minchi2+1.38)),interpolation="none");
  rangea = findall(vec(sum(chi2.<(minsol[1]+1.38), dims=2)).>0)
@@ -125,7 +110,7 @@ FWHM_high = (ha[2][indx_HM_right]+ha[2][indx_HM_right+1])/2 - center
 σ_high = FWHM_high / (2*sqrt(2*log(2))) # Assuming right ~ Gaussian
 
 #
-# CLASSIC JACKNIFE
+# BOOTSTRAP WITHOUT REPLACEMENT
 #
 using Random
 njack = 10000
