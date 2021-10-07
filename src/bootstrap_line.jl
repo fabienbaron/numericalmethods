@@ -1,4 +1,4 @@
-using PyPlot, LinearAlgebra, NLopt
+using PyPlot, LinearAlgebra, NLopt, Statistics
 N=30
 σ=rand(N);
 X=sort(rand(N));
@@ -6,8 +6,6 @@ X=sort(rand(N));
 θ2=7
 Y=θ1 .+ θ2*X + σ.*randn(N);
 scatter(X,Y)
-
-
 chi2=(θ,dummy)->norm((Y - (θ[1] .+ θ[2]*X) )./σ)^2
 #Minimization
 θ_init = [1.0,1.0];
@@ -37,9 +35,13 @@ for i=1:N
     (minchi2,θ_opt[:,i],ret) = optimize(optimizer, θ_init);
     #println("got $minchi2 at $θ_opt (returned $ret)");
 end
+mean(θ_opt[1,:])
+std(θ_opt[1,:])
+mean(θ_opt[2,:])
+std(θ_opt[2,:])
 
 #
-# Bootstrap with replacement
+# Bootstrap with replacement ->>> WORKS
 #
 Nboot = 1000
 θ_opt = zeros(Float64, 2, Nboot)
@@ -56,3 +58,7 @@ for i=1:Nboot
     min_objective!(optimizer, chi2);
     (minchi2,θ_opt[:,i],ret) = optimize(optimizer, θ_init);
 end
+mean(θ_opt[1,:])
+std(θ_opt[1,:])
+mean(θ_opt[2,:])
+std(θ_opt[2,:])
