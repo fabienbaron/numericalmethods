@@ -9,11 +9,14 @@ rr = collect(range(-3,3,length=1001));
 yy = repeat(rr,1,1001);
 xx = yy';
 
-fmap = f_ros(xx,yy)
+f = f_ack
+
+
+fmap = f(xx,yy)
 # Plots
 
 clf();imshow(fmap.^.25);tight_layout()
-niter = 200;
+niter = 2000;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 
@@ -22,25 +25,29 @@ niter = 200;
 # Plot initial location
 scatter((θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1, color=:blue, s=10)
 
+# Setup step length for the problem (it will change over time + random draw)
 stepsize = 10.0
 accepted_pos = [(θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1]
+naccepted=0
 # Initialize Markov Chain
 for i=2:niter
-    δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5);
-    θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0)
+    δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5); # compute actual move for this iteration
+    θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0) # restrict trial move to be within range -5:5
+#    θ_trial= rand(2)*10 .-5 # just try a random new point (non-Markov, generally bad)
 
-    f_current = f_ros(θ[i-1,1], θ[i-1,2]) ; # f at current location
-    f_trial = f_ros(θ_trial[1], θ_trial[2]) # f at tentative location
+    f_current = f(θ[i-1,1], θ[i-1,2]) ; # f at current location
+    f_trial = f(θ_trial[1], θ_trial[2]) # f at trial location
     if(f_trial < f_current) # improvement !
         θ[i,:] = θ_trial # accept move
         scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:white, s=10)
-        arrow(accepted_pos[1],accepted_pos[2],(θ_trial[1]+5)*100+1-accepted_pos[1],(θ_trial[2]+5)*100+1-accepted_pos[2], color=:white,shape="full", length_includes_head=true)
+        arrow(accepted_pos[1],accepted_pos[2],(θ_trial[1]+5)*100+1-accepted_pos[1],
+        (θ_trial[2]+5)*100+1-accepted_pos[2], color=:white,shape="full", length_includes_head=true)
         accepted_pos = [(θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1]
+        naccepted+=1
     else
         θ[i,:] = θ[i-1,:] # reject move, stay where we are
         scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red, s=10)
     end
-#scatter((θ[i,1]+5)*100+1,(θ[i,2]+5)*100+1, color=:black)
 end
 
-f_ros(θ[niter,1],θ[niter,2])
+f(θ[niter,1],θ[niter,2])

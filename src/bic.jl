@@ -1,3 +1,6 @@
+#
+# Bayesian Information Criterion
+#
 using PyPlot
 
 function logsumexp(X)
@@ -81,4 +84,3 @@ println("M2 chi2: ", minimum(chi2_M2), " chi2r: ", minimum(chi2_M2)/(n-k), " log
 
 k=3
 println("M3 chi2: ", minimum(chi2_M3), " chi2r: ", minimum(chi2_M3)/(n-k), " log Z3 = ", logZ3, " AIC= ", minimum(chi2_M3)+2*k," AICc= ", minimum(chi2_M3)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M3)+k*log(n));
- 
