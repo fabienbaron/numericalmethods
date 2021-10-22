@@ -28,7 +28,7 @@ end
 return α_try[findmin(fval)[2]]
 end
 
-N=100
+N=1000
 f = zeros(N)
 x = zeros(N, 2)
 x[1,:] .= 10*rand(2).-5
@@ -43,4 +43,4 @@ end
 rr = collect(range(-5,5,length=1000));
 map = [f_ros([i,j]) for i in rr for j in rr]
 imshow(reshape(map.^.2,(1000,1000)))
-scatter((x[:,1].+5)*100, (x[:,2].+5)*100)
+scatter((x[:,1].+5)*100, (x[:,2].+5)*100, s=1, color=:red)
