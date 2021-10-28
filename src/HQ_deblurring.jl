@@ -25,10 +25,7 @@ y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 # x_truth = fft(ones(64,64))
 #D=(((fftshift(ifft(reshape(H*vec(x_truth),64,64)))./(fftshift(ifft(reshape(x_truth,64,64)))))))
 #D[1,:].=0.0
-
-C = vec((((ifft(reshape(H[2567,:],64,64))))))
-
-
+#C = vec((((ifft(reshape(H[2567,:],64,64))))))
 
 #
 # Spatial gradient matrix for total variation
@@ -54,10 +51,10 @@ global x=(H'*Σ*H+ρ*∇'*∇)\(H'*Σ*y+ρ*∇'*z); # should minimize 0.5*norm(H
 # z subproblem
 global z = prox_l1(∇*x,μ/ρ); # should minimize μ*norm(z,1)+0.5*ρ*norm(z-∇*x,2)^2
 
-chi2 = ((y-H*x)'*Σ*(y-H*x))[1]/length(y)
+chi2 = ((y-H*x)'*Σ*(y-H*x))[1]
 reg = μ*norm(∇*x,1);
 aug = norm(z-∇*x,2)^2;
-println("chi2 = ", chi2, " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
+println("obj= ", chi2+reg, "chi2r= ", chi2/length(y), " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
 # increase ρ
 global ρ = 1.5*ρ
 imview(reshape(x,(64,64)))
