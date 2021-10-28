@@ -31,6 +31,7 @@ end
 N=100
 f = zeros(N)
 x = zeros(N, 2)
+y = zeros(N, 2)
 g = zeros(N, 2)
 d = zeros(N, 2)
 β = zeros(N)
@@ -41,28 +42,16 @@ d[1,:] = - g[1,:]
 
 α=1e-4;
 for i=2:N
-    g[i,:] = g_ros(x[i-1,:]);
-    β[i] = norm(g[i,:])/norm(g[i-1,:]);
+    g[i,:] = g_ros(x[i,:]);
+    y[i,:] = g[i,:]-g[i-1,:]
+#   β[i] = norm(g[i,:])^2/norm(g[i-1,:])^2; #Fletcher-Reeves
+    β[i] = (g[i,:]'*y[i,:])[1]/norm(g[i-1,:])^2; #Polyak-Ribiere
     d[i,:] = -g[i,:] + β[i]*d[i-1,:];
     α = linesearch(x[i-1,:], d[i,:]);
-    x[i,:] = x[i-1,:] - α * d[i,:];
+    x[i,:] = x[i-1,:] + α * d[i,:];
     f[i] = f_ros(x[i,:]);
 end
 rr = collect(range(-5,5,length=1000));
 map = [f_ros([i,j]) for i in rr for j in rr]
 imshow(reshape(map.^.2,(1000,1000)))
-scatter((x[:,1].+5)*100, (x[:,2].+5)*100)
-
-α=1e-4;
-for i=2:N
-    g[i,:] = g_ros(x[i-1,:]);
-    β[i] = norm(g[i,:])/norm(g[i-1,:]);
-    d[i,:] = -g[i,:] + β[i]*d[i-1,:];
-    α = linesearch(x[i-1,:], d[i,:]);
-    x[i,:] = x[i-1,:] - α * d[i,:];
-    f[i] = f_ros(x[i,:]);
-end
-rr = collect(range(-5,5,length=1000));
-map = [f_ros([i,j]) for i in rr for j in rr]
-imshow(reshape(map.^.2,(1000,1000)))
-scatter((x[:,1].+5)*100, (x[:,2].+5)*100)
+scatter((x[:,1].+5)*100, (x[:,2].+5)*100, s=1, color=:red)
