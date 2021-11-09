@@ -33,8 +33,8 @@ y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
 ∇ = [kron(spdiagm(0=>ones(nx)), D_1D) ;  kron(D_1D, spdiagm(0=>ones(nx)))];
 
-function prox_l1(z,α)
-return sign.(z).*max.(abs.(z).-α,0)
+function prox_l1(x,α)
+return sign.(x).*max.(abs.(x).-α,0)
 end
 
 global mindist = 1e99;
@@ -50,12 +50,11 @@ for iter=1:50
 global x=(H'*Σ*H+ρ*∇'*∇)\(H'*Σ*y+ρ*∇'*z); # should minimize 0.5*norm(H*x-y,2)^2+0.5*ρ*norm(z-∇*x,2)^2
 # z subproblem
 global z = prox_l1(∇*x,μ/ρ); # should minimize μ*norm(z,1)+0.5*ρ*norm(z-∇*x,2)^2
-
 chi2 = ((y-H*x)'*Σ*(y-H*x))[1]
 reg = μ*norm(∇*x,1);
 aug = norm(z-∇*x,2)^2;
-println("obj= ", chi2+reg, "chi2r= ", chi2/length(y), " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
+println("obj= ", chi2+reg, " chi2r= ", chi2/length(y), " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
 # increase ρ
 global ρ = 1.5*ρ
-imview(reshape(x,(64,64)))
+imshow(reshape(x,(64,64)))
 end

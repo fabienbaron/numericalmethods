@@ -2,15 +2,15 @@ using FITSIO, LinearAlgebra, Printf, MatrixDepot, SparseArrays, Wavelets
 include("view.jl")
 
 # Square patches
- nx = 64; x_truth = zeros(nx,nx);
+ nx = 256; x_truth = zeros(nx,nx);
  x_truth[10:15,34:54] .= 5.0;
  x_truth[26:35,14:24] .= 8.0;
  x_truth[37:60,10:24] .= 9.0;
  x_truth = vec(x_truth);
 
 
- x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
- x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
+ #x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
+ #x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
 
 # Example of transform
 wt = wavelet(WT.cdf97, WT.Lifting)
