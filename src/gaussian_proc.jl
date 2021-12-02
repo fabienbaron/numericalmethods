@@ -19,5 +19,5 @@ y=L*rand(100);
 xstar=[1.5, 2.5, 3.5, 101, 102];
 plot(x,y)
 fstar=K(xstar, x, σ, l)*((K(x,x,σ,l)+σn*I)\y);
-covfstar=K(xstar, xstar,σ,l)*((K(x,x,σ,l)+σn*I)\K(xstar, x, σ, l)[1,:]);
+covfstar=K(xstar, xstar, σ,l)-K(xstar, x, σ, l)*(inv(K(x, x, σ, l)+σn^2*I)*K(x, xstar, σ, l))
 scatter(xstar, fstar)
