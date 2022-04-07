@@ -8,9 +8,9 @@ include("view.jl")
  x_truth[37:60,10:24] .= 9.0;
  x_truth = vec(x_truth);
 
-
- #x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
- #x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
+nx=64
+ x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
+ x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
 
 # Example of transform
 wt = wavelet(WT.cdf97, WT.Lifting)
@@ -65,7 +65,7 @@ return sign.(z).*max.(abs.(z).-α,0)
 end
 
 global mindist = 1e99;
-μ = 1.0;#0.06;  # use 0.06 for saturn, 1.0 for the square patches
+μ = 0.03#1.0;#0.06;  # use 0.06 for saturn, 1.0 for the square patches
 # initialization
 x = deepcopy(y)
 z = W(x)
@@ -73,15 +73,15 @@ z = W(x)
 
 for iter=1:50
 # x subproblem
-global x=(H'*Σ*H+ρ*WtW)\(H'*Σ*y+ρ*Wt(z)); # should minimize 0.5*norm(H*x-y,2)^2+0.5*ρ*norm(z-∇*x,2)^2
+x=(H'*Σ*H+ρ*WtW)\(H'*Σ*y+ρ*Wt(z)); # should minimize 0.5*norm(H*x-y,2)^2+0.5*ρ*norm(z-∇*x,2)^2
 # z subproblem
-global z = prox_l1(W(x),μ/ρ); # should minimize μ*norm(z,1)+0.5*ρ*norm(z-∇*x,2)^2
+z = prox_l1(W(x),μ/ρ); # should minimize μ*norm(z,1)+0.5*ρ*norm(z-∇*x,2)^2
 
 chi2 = ((y-H*x)'*Σ*(y-H*x))[1]/length(y)
 reg = μ*norm(W(x),1);
 aug = norm(z-W(x),2)^2;
 println("chi2 = ", chi2, " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
 # increase ρ
-global ρ = 1.5*ρ
+ρ = 1.5*ρ
 imview(reshape(x,(64,64)))
 end
