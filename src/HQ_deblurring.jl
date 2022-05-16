@@ -1,4 +1,4 @@
-using FITSIO, LinearAlgebra, Printf, MatrixDepot, SparseArrays
+using FITSIO, LinearAlgebra, Printf, MatrixDepot, SparseArrays, PyPlot
 include("view.jl")
 
 # x_truth=read(FITS("saturn64.fits")[1]);nx=size(x_truth,1)
