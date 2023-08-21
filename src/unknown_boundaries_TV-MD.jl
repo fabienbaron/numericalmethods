@@ -3,28 +3,30 @@
 # 2D images
 # A, M have the same meaning as in the paper
 # Note this is using the isotropic TV
+# TODO: handle noise σ≠1
 using FITSIO, LinearAlgebra, PyPlot, SparseArrays, FFTW
 include("view.jl")
 include("admm_utils.jl")
 x0 = Float64.(read(FITS("saturn.fits")[1]));
 #x0 = Float64.(load("cameraman256.tif"));
 nx0 = size(x0,1)
-otf = fft(gaussian2d(nx0,nx0,2.0));
+otf = fft(gaussian2d(nx0,nx0,3.0));
 otf ./= maximum(abs.(otf));
 otf2 = abs2.(otf)  # this is 2D
-A = x->conv_otf(otf,x)
-At = x->conv_otf_t(otf,x)
+A = x->real.(ifftshift(ifft(otf.*fft(x))));
+At = x->real.(ifftshift(ifft(conj(otf).*fft(x))));
 nu = 9 # band of nu pixels=zero around
 nx = nx0-2*nu # size of data frame and object
-M = sparse_mask(nx0, nu+1:nx0-nu, nu+1:nx0-nu)
-DMtM = reshape(Array(diag(M'*M)), nx0, nx0)
-y = reshape(M*vec(A(x0)), nx,nx)
+M_mat = sparse_mask(nx0, nu+1:nx0-nu, nu+1:nx0-nu)
+M= x->reshape(M_mat*vec(x), nx,nx)
+Mt=x->reshape(M_mat'*vec(x),nx0,nx0)
+DMtM = reshape(Array(diag(M_mat'*M_mat)), nx0, nx0)
+
+y = M(A(x0))
 σ = 1; #maximum(y)/40 # noise level
 y += σ*randn(nx,nx) # add Gaussian white noise
 imview(reshape(y, nx, nx))
 Γ, Γt, Dx2, Dy2 = TV_functions(nx0);
-
-
 
 # ADMM-MD
 u1 = zeros(Float64, nx0,nx0);
@@ -34,31 +36,47 @@ d1 = zeros(Float64, nx0, nx0)
 u2 = Γ(u1)
 d2 = zeros(Float64, nx0, nx0, 2)
 
-λ = 0.001
-µ1 = minimum([1, 5000λ])
-µ2 = 10*λ
+λ = 0.05
+µ1 = 1e-2
+µ2 = 1e-2
 
-niter = 500
+niter = 2000
 z=Float64[]
+
+r1 = zeros(Float64, niter);
+r2 = zeros(Float64, niter);
 
 for k=1:niter
     z = real.(ifft(fft(μ1*At(u1+d1) + μ2*Γt(u2+d2))./(μ1*otf2 + μ2*(Dx2+Dy2))))
     # Apply proximal operators
     #u1 = (M'*M + μ1*I)\(M'*y + μ1*(A(z)-d1)) # eq 49
-    u1 = (reshape(M'*vec(y),nx0,nx0) + μ1*(A(z)-d1))./(DMtM .+ μ1) # eq 49
+    u1 = (Mt(y) + μ1*(A(z)-d1))./(DMtM .+ μ1) # eq 49
     u2 = prox_l1(Γ(z) - d2,λ/μ2)
     #Update Lagrangian multipliers
-    d1 = d1 - A(z)  + u1
-    d2 = d2 - Γ(z)  + u2
-    println("dist: $(norm(z-x0,1)/length(x0))")
-    #if mod(k,100) == 0
-    #    imview3(reshape(x0,nx0,nx0), reshape(y,nx,nx), reshape(z,nx0,nx0))
-    #end
+    d1 +=  - A(z)  + u1
+    d2 +=  - Γ(z)  + u2
+
+    r1[k] = norm(A(z) - u1)
+    r2[k] = norm(Γ(z) - u2)
+    println("$k r1:$(r1[k]) r2: $(r2[k]) dist: $(norm(z-x0,1)/length(x0))")
+    if mod(k,100) == 0
+        imview3(reshape(x0,nx0,nx0), reshape(y,nx,nx), reshape(z,nx0,nx0))
+    end
 end
-imview3(reshape(x0,nx0,nx0), reshape(y,nx,nx), reshape(z,nx0,nx0))
 
 imview(reshape(z, nx0, nx0))
 plot([nu, nu], [nu, nx0-nu], "w--")
 plot([nx0-nu, nx0-nu], [nx0-nu, nu], "w--")
 plot([nu, nx0-nu], [nx0-nu, nx0-nu], "w--")
 plot([nu, nx0-nu], [nu, nu], "w--")
+
+fig = figure(figsize=(10,5))
+subplot(1,2,1)
+imshow(M(z), cmap=:gray)
+subplot(1,2,2)
+imshow(reshape(y,nx,nx),cmap=:gray )
+
+# TBD: Accelerating it with functions -- note cropping/padding is a little different (2 pix wider here)
+M = x->x[1+nu:end-nu, 1+nu:end-nu];
+Mt = x->[zeros(nu, nx0) ; zeros(nx0-2*nu, nu) x zeros(nx0-2*nu, nu); zeros(nu, nx0) ]; #zero padding
+DMtM # TBD: basically ones padded by zeros

@@ -1,8 +1,8 @@
 using PyPlot
 
 function imview3(xtruth,xnoisy,xreconst;figtitle="", color="gray")
-    if(ndims(x0)==1)
-        nx = Int(sqrt(length(x0)));
+    if(ndims(xtruth)==1)
+        nx = Int(sqrt(length(xtruth)));
         xtruth = reshape(xtruth,nx,nx);
         xnoisy = reshape(xnoisy,nx,nx);
         xreconst = reshape(xreconst,nx,nx);
