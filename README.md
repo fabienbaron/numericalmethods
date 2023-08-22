@@ -4,15 +4,13 @@ This class will use the Julia programming language as well as Python's matplotli
 
 ## Prerequisites
 
-## Julia and Atom setup
+## Julia setup
 
 Install the latest Julia from https://julialang.org/downloads/
 
-Install the Atom editor https://atom.io/.
+## VSCode Setup
 
-Install the language-julia Atom package from within the Settings/Preferences of Atom, Install tab: this enables syntax highlighting of Julia code.
-
-Install the latex-completions Atom package from within Atom: this enables the autocompletion of LaTeX symbols (α, β, ...)
+Enable the Julia extension in VScode.
 
 ### PyPlot setup for Windows and Linux
 
@@ -44,10 +42,11 @@ grid()
 
 ## Learning Julia
 
-These two links should get you started:
+These three links should get you started:
 1. https://learnxinyminutes.com/docs/julia/
 2. https://www.sas.upenn.edu/~jesusfv/Chapter_HPC_8_Julia.pdf
+3. https://computationalthinking.mit.edu/Fall23/
 
 If you already master Matlab or Python also check https://cheatsheets.quantecon.org/
 
-Also see http://juliaastro.github.io for useful functions.
+Also see http://juliaastro.github.io for useful functions in Astronomy.
