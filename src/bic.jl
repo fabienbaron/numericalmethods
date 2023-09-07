@@ -3,22 +3,26 @@
 #
 using PyPlot
 
-function logsumexp(X)
-  # Compute log(sum(exp(X))) while avoiding numerical over/underflow.
-  return log(sum(exp.(X.-maximum(X)))).+maximum(X)
-end
-
-
 # Generate data
-n= 50
+n = 50
 x = sort(rand(n));
-θ= zeros(2); θ[1]=.2; θ[2]=.5;
-σ=.5*ones(n)
+θ = zeros(2); 
+θ[1]=.2; 
+θ[2]=5.0;
+σ =2.0*rand(n)
 y = θ[1] .+ θ[2]*x + σ.*randn(n) ;
 scatter(x,y);
 errorbar(x,y, σ ,linestyle="none");
 plot(x, θ[1].+θ[2]*x,linestyle="dashed" );
 
+
+
+
+function logsumexp(X)
+    # Compute log(sum(exp(X))) while avoiding numerical over/underflow.
+    return log(sum(exp.(X.-maximum(X)))).+maximum(X)
+  end
+  
 
 # 1D grid search, MODEL M1: constant
 gridθ= range(0,1, length=101)
