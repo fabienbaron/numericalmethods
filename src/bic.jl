@@ -28,7 +28,7 @@ end
   
 # 1 parameter, 1D grid search, MODEL M1: constant
 f1 = θ->θ[1] .+ 0*x;
-gridθ= range(0, 1, length=101)
+gridθ = range(0, 10, length=1000)
 chi2_M1 = [chi2(y, f1(i) , σ) for i in gridθ]
 #plot(gridθ, chi2_M1)
 minindx = findmin(chi2_M1)[2]
@@ -69,7 +69,7 @@ delta_θ1 =gridθ1[2]-gridθ1[1];
 delta_θ2 =gridθ2[2]-gridθ2[1];
 delta_θ3 =gridθ3[2]-gridθ3[1];
 logZ3 = log(delta_θ1*delta_θ2*delta_θ3) + logsumexp(-0.5*chi2_M3)
-~, minx, ~, result = fit_chi2_ultranest(f2, y, σ, [0.0,0.0,-5.0], [10.0,10.0,5.0], cornerplot=false);
+~, minx, ~, result = fit_chi2_ultranest(f3, y, σ, [0.0,0.0,-5.0], [10.0,10.0,5.0], cornerplot=false);
 logZ3_ultranest = result["logz"]
 plot(x, f3(minx));
 

@@ -21,7 +21,7 @@ function imview3(xtruth,xnoisy,xreconst;figtitle="", color="gray")
     tight_layout()
 end
 
-function imview(x;title="",zoom=1, color="gray")
+function imview(x::Array{Float64,2};title="",zoom=1, color="gray")
     if zoom < 1
         zoom = 1
     end
@@ -36,6 +36,13 @@ function imview(x;title="",zoom=1, color="gray")
     imshow(x[center_x-zoom_span_x+1:center_x+zoom_span_x, center_y-zoom_span_y+1:center_y+zoom_span_y], cmap=ColorMap(color), interpolation="none");
     tight_layout()
 end
+
+function imview(x::Array{Float64};title="",zoom=1, color="gray")
+    n = Int(sqrt(length(x)))
+    imview(reshape(x,n,n);title="",zoom=1, color="gray")
+end
+
+
 
 function imsurf(z; title="", zoom=1, color="coolwarm")
     if zoom < 1
