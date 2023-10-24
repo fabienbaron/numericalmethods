@@ -1,15 +1,16 @@
 using PyPlot
 # Generate data
-N = 20; # number of data points
+N = 200; # number of data points
 θ=rand(N)*2*pi;
 a = 3
 b = 5
-σ = 0.5
-x=  a *cos.(θ)  + σ*randn(N) #.+0.1; # These additive factors will introduce systematic errors
-y = b *sin.(θ)  + σ*randn(N) #.-0.2;
+σ_true = 0.5*ones(N)
+x=  a *cos.(θ)  + σ_true.*randn(N) ;
+y = b *sin.(θ)  + σ_true.*randn(N) ;
 scatter(x,y); axis("equal")
-chi2r = sum( (x-a*cos.(θ)).^2  + (y-b*sin.(θ)).^2)/σ^2/(2N)
-
+σ = 0.3 .+rand(N)/10
+chi2r = sum( (((x-a*cos.(θ)).^2  + (y-b*sin.(θ)).^2))./σ.^2)/(2N)
+chi2 = (a,b)-> sum(( (x-a*cos.(θ)).^2  + (y-b*sin.(θ)).^2)./σ.^2)/(2N)
 #Visualize the true ellipse
 θ_all=range(-pi,pi,length=1000)
 figure(1)
@@ -43,14 +44,14 @@ Ngrid = 200
  rangeb = findall(vec(sum(chi2.<(minsol[1]+exp(1)/2), dims=1)).>0)
 #  a[rangea]
 #  b[rangeb]
- print("a = ", a_grid[minsol[2][1]], " + ", (maximum(a_grid[rangea])-a_grid[minsol[2][1]])/((2*sqrt(2*log(2)))*2 , " - ",  (a_grid[minsol[2][1]]-minimum(a_grid[rangea]))/2.355*2)
- print("b = ", b_grid[minsol[2][2]], " + ", (maximum(b_grid[rangeb])-b_grid[minsol[2][2]])/((2*sqrt(2*log(2)))*2 , " - ",  (b_grid[minsol[2][2]]-minimum(b_grid[rangeb]))/2.355*2)
+ print("a = ", a_grid[minsol[2][1]], " + ", (maximum(a_grid[rangea])-a_grid[minsol[2][1]])/(2*sqrt(2*log(2)))*2 , " - ",  (a_grid[minsol[2][1]]-minimum(a_grid[rangea]))/2.355*2)
+ print("b = ", b_grid[minsol[2][2]], " + ", (maximum(b_grid[rangeb])-b_grid[minsol[2][2]])/(2*sqrt(2*log(2)))*2 , " - ",  (b_grid[minsol[2][2]]-minimum(b_grid[rangeb]))/2.355*2)
 
 # Estimate best (a,b) with NLopt
 using NLopt
 
 function chi2opt(params::Vector, dummy::Vector)
-    return sum( (x-params[1]*cos.(θ)).^2  + (y-params[2]*sin.(θ)).^2)/σ^2
+    return sum( (x-params[1]*cos.(θ)).^2  + (y-params[2]*sin.(θ)).^2)./σ.^2
 end
 
 params_init = [0,0];
@@ -116,19 +117,3 @@ FWHM_low = center - (ha[2][indx_HM_left]+ha[2][indx_HM_left+1])/2
 FWHM_high = (ha[2][indx_HM_right]+ha[2][indx_HM_right+1])/2 - center
 σ_low =  FWHM_low / (2*sqrt(2*log(2))) # Assuming left ~ Gaussian
 σ_high = FWHM_high / (2*sqrt(2*log(2))) # Assuming right ~ Gaussian
-
-#
-# BOOTSTRAP WITHOUT REPLACEMENT
-#
-using Random
-njack = 10000
-x_data = zeros(njack,19);
-y_data = zeros(njack,19);
-θ_data = zeros(njack,19);
-
-for i=1:nboot
-    indx = (randperm(20)([1:19]);
-    x_data[i,:]= x[indx];
-    y_data[i,:]= y[indx];
-    θ_data[i,:] = θ[indx];
-end

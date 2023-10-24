@@ -15,7 +15,7 @@ min_objective!(optimizer, chi2);
 println("got $minchi2 at $θ_opt (returned $ret)");
 
 #
-# Jacknife ->>>>>> FAIL
+# Jacknife
 #
 
 X_orig = deepcopy(X)

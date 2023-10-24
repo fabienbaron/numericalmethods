@@ -13,7 +13,7 @@ fmap = f_ack(xx,yy)
 # Plots
 
 clf();imshow(fmap.^.5);tight_layout()
-niter = 2000;
+niter = 1000;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 acc = zeros(Float64, niter)
@@ -31,11 +31,14 @@ temperature = t0 .- collect(1:niter)*(t0-tniter)/niter;
 naccepted =0
 # Initialize Markov Chain
 for i=2:niter
+    stepsize = 1.0 / sqrt(i)
     δ[i-1,:] = stepsize*(rand(2).-0.5);
     θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0)
     f_current = f_ack(θ[i-1,1], θ[i-1,2]) ; # f at current location
     f_trial = f_ack(θ_trial[1], θ_trial[2]) # f at tentative location
     acc[i] = min(1,exp(-(f_trial-f_current)/temperature[i]))# acceptance rate
+    # f_trial < f_current  -> improvement -> accept always
+    # f_trial > f_current -> exp(-(f_trial-f_current)) --> decrease the acceptance prob as temp get lower  
     if(rand() < acc[i]) # improvement !
         naccepted+=1
         θ[i,:] = θ_trial # accept move
@@ -46,6 +49,6 @@ for i=2:niter
         θ[i,:] = θ[i-1,:] # reject move, stay where we are
         scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red, s=10)
     end
-#scatter((θ[i,1]+5)*100+1,(θ[i,2]+5)*100+1, color=:black)
+scatter((θ[i,1]+5)*100+1,(θ[i,2]+5)*100+1, color=:black)
 end
 f_ack(θ[niter,1],θ[niter,2])
