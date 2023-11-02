@@ -17,25 +17,42 @@ subplot(121); imshow(abs.(X)); title("Default FFT: zero freq in corner")
 subplot(122); imshow(abs.(fftshift(X))); title("fftshift: zero freq at center")
 tight_layout()
 
+function fft2(x)
+    return fftshift(fft(fftshift(x)))
+end
+function ifft2(x)
+    return ifftshift(ifft(ifftshift(x)))
+end
+function convolve(a, b) #convention, using fftshift
+    return real.(ifft2(fft2(a).*fft2(b)));
+end
+
+function convolve_fouriermask(a, mask) #convention, using fftshift
+    return real.(ifft2(fft2(a).*mask));
+end
+
+
 # FFT vs disc size
-yy = repeat(collect(range(1, 64, length=64)).-32, 1, 64);
+N=256
+yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
 xx = yy'; rr = sqrt.(xx.^2 + yy.^2);
-disc1 = rr.<10; # small disc
-disc2 = rr.<30; # larger disc
+disc1 = rr.<20; # small disc
+disc2 = rr.<60; # larger disc
 fig = figure("2D objects", figsize=(8,4));
-subplot(121); imshow(abs.(fftshift(fft(disc1)))); title("|FFT| small disc")
-subplot(122); imshow(abs.(fftshift(fft(disc2)))); title("|FFT| larger disc")
+subplot(121); imshow(abs.(fft2(disc1))); title("|FFT| small disc")
+subplot(122); imshow(abs.(fft2(disc2))); title("|FFT| larger disc")
 tight_layout()
 
 # Fourier filtering - we'll be removing the high or low spatial frequencies
-yy = repeat(collect(range(1, 64, length=64)).-32, 1, 64);
+image = read(FITS("saturn.fits")[1]);
+N=size(image,1)
+yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
 xx = yy'; rr = sqrt.(xx.^2 + yy.^2);
 mask = rr.<10; # this will be our mask in Fourier space
-mask_hi = fftshift(mask); # we need to apply our mask at the right location in Fourier space
+mask_hi = mask; # we need to apply our mask at the right location in Fourier space
 mask_low = 1 .- mask_hi
-image = read(FITS("saturn64.fits")[1]);
-high_filtered_image = real.(ifft(mask_hi.*fft(image)))
-low_filtered_image = real.(ifft(mask_low.*fft(image)))
+high_filtered_image = convolve_fouriermask(image, mask_hi)
+low_filtered_image = convolve_fouriermask(image, mask_low)
 fig = figure("Filtering example", figsize=(12,4));
 subplot(131); imshow(image); title("Truth")
 subplot(132); imshow(high_filtered_image); title("High Freq Filtered")
