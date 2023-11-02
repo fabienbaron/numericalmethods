@@ -7,29 +7,38 @@ figure("Signal"); plot(x);
 X=fft(x)
 figure("Modulus FFT"); plot(abs.(X)[1:50]);
 
-# FFTs of a rectangle
-x = zeros(64,64)
-x[12:35, 23:46] .= 1;
-total = sum(x); X = fft(x);
-print("Sum(x) = ", total, "\nZero frequency in X = X[1] = ", X[1]);
-fig = figure("fftshift: location of zero frequency", figsize=(8,4));
-subplot(121); imshow(abs.(X)); title("Default FFT: zero freq in corner")
-subplot(122); imshow(abs.(fftshift(X))); title("fftshift: zero freq at center")
-tight_layout()
-
 function fft2(x)
     return fftshift(fft(fftshift(x)))
 end
 function ifft2(x)
     return ifftshift(ifft(ifftshift(x)))
 end
-function convolve(a, b) #convention, using fftshift
+
+function convolve(a, b) 
     return real.(ifft2(fft2(a).*fft2(b)));
 end
+function correlate(a, b) 
+    return real.(ifft2(fft2(a).*conj(fft2(b))));
+end
 
-function convolve_fouriermask(a, mask) #convention, using fftshift
+function convolve_fouriermask(a, mask) 
     return real.(ifft2(fft2(a).*mask));
 end
+
+
+
+# FFTs of a rectangle
+x = zeros(64,64)
+x[12:35, 23:46] .= 1;
+total = sum(x); 
+X1 = fft(x);
+X2 = fft2(x);
+print("Sum(x) = ", total, "\nZero frequency in X = X[1] = ", X[1]);
+fig = figure("fftshift: location of zero frequency", figsize=(8,4));
+subplot(121); imshow(abs.(X1)); title("Default FFT: zero freq in corner")
+subplot(122); imshow(abs.(X2)); title("fftshift: zero freq at center")
+tight_layout()
+
 
 
 # FFT vs disc size
@@ -67,9 +76,6 @@ tight_layout()
 x1=zeros(64,64); x1[23:34, 16:23].=1; x1[45:56,23:56].=2
 x2=circshift(x1,(5,-8))+randn(64,64)
 
-function correlate(a::Array{Float64,2}, b::Array{Float64,2}) #convention, using fftshift
-    return real.(fftshift(ifft(fft(a).*conj(fft(b)))));
-end
 fig = figure()
 imshow(correlate(x1,x1)); # Autocorrelation
 locmax1 = findmax(correlate(x1,x1))[2] ; # maximum is at the center
@@ -81,10 +87,10 @@ print("Estimated shift: ",locmax1 - locmax2);
 # convolution
 
 # shift (subpixel shifts are possible !)
-yy = repeat(collect(range(1, 64, length=64)).-32, 1, 64);
+yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
 xx = yy';
-cis.(0.1*xx) # cis(ϕ) is just exp(iϕ)
-shifted_image = real.(ifft(fftshift(cis.(0.1*xx)).*fft(image)))
+cis.(0.6*xx) # cis(ϕ) is just exp(iϕ)
+shifted_image = real.(ifft(fftshift(cis.(0.6*xx)).*fft(image)))
 fig=figure("Image Shifting via FFT")
 subplot(121); imshow(image); title("Original")
 subplot(122); imshow(shifted_image); title("Shifted")
