@@ -1,12 +1,4 @@
-using FFTW, PyPlot, FITSIO
-# Basic FFT of a 1D signal to identify frequencies
-t=range(0,0.5,length=1000); # signal is sampled uniformly
-w=10*2π;
-x=sum([n*cos.(n*w*t) for n=1:5],dims=1)[1]
-figure("Signal"); plot(x);
-X=fft(x)
-figure("Modulus FFT"); plot(abs.(X)[1:50]);
-
+using FFTW, PyPlot, FITSIO, LinearAlgebra
 function fft2(x)
     return fftshift(fft(fftshift(x)))
 end
@@ -27,11 +19,23 @@ end
 
 
 
+
+# Basic FFT of a 1D signal to identify frequencies
+t=range(0,0.5,length=1000); # signal is sampled uniformly
+w=10*2π;
+x=sum([n*cos.(n*w*t) for n=1:5],dims=1)[1]
+figure("Signal"); plot(x);
+X=fft(x)
+figure("Modulus FFT"); plot(abs.(X)[1:50]);
+
+
+
+
 # FFTs of a rectangle
 x = zeros(64,64)
 x[12:35, 23:46] .= 1;
 total = sum(x); 
-X1 = fft(x);
+X1 = fft(x); # "zeroflux" is in the corner
 X2 = fft2(x);
 print("Sum(x) = ", total, "\nZero frequency in X = X[1] = ", X[1]);
 fig = figure("fftshift: location of zero frequency", figsize=(8,4));
@@ -86,12 +90,65 @@ print("Estimated shift: ",locmax1 - locmax2);
 
 # convolution
 
-# shift (subpixel shifts are possible !)
-yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
-xx = yy';
-cis.(0.6*xx) # cis(ϕ) is just exp(iϕ)
-shifted_image = real.(ifft(fftshift(cis.(0.6*xx)).*fft(image)))
+# shift
+
+# Convolving with centered point leave the image unchanged
+point = zeros(N,N); point[N÷2+1,N÷2+1] = 1.0
+shifted_image = convolve(point, image)
+norm(shifted_image-image)
+
+# Convolving with shifted point translated the whole image
+point = zeros(N,N); point[N÷2+1,N÷2+100] = 1.0
+shifted_image = convolve(point, image)
+
 fig=figure("Image Shifting via FFT")
 subplot(121); imshow(image); title("Original")
 subplot(122); imshow(shifted_image); title("Shifted")
+tight_layout()
+
+# subpixel shifts
+yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
+xx = yy';
+tiptilt = cis.(0.6*xx+0.2*yy) # cis(ϕ) is just exp(iϕ)
+shifted_image = convolve(ifft2(tiptilt), image)
+fig=figure("Image Shifting via FFT")
+subplot(121); imshow(image); title("Original")
+subplot(122); imshow(shifted_image); title("Shifted")
+tight_layout()
+imshow(abs.(tiptilt))
+
+
+# Point spread functions
+include("zernikes.jl")
+# Visualize the first 25 Zernikes one by one
+npix=512;
+diameter=32
+aperture = circular_aperture(npix=npix, diameter=diameter, centered=true, normalize=true); 
+fig = figure("PSF affected by single Zernike mode",figsize=(12,12))
+fig.subplots(3,4)
+names = ["Piston", "Tip", "Tilt", "Defocus", "Primary astigmatism", "Primary astigmatism", "Horizontal coma", "Vertical coma", "Trefoil", "Trefoil", "Spherical Aberration", "Quadrafoil", "Quadrafoil", "Secondary coma", "Secondary coma"]
+for i=0:11
+  phase= 100*zernike(i+1, npix=npix, diameter=64, centered=true);
+  pupil=aperture.*cis.(phase);
+  psf=abs2.(ifft2(pupil)*npix); #the npix factor is for the normalization of the fft
+  subplot(3, 4, i+1)
+  gca().axes.get_xaxis().set_ticks([]);
+  gca().axes.get_yaxis().set_ticks([]);
+  imshow(psf[npix÷2-npix÷4:npix÷2+npix÷4, npix÷2-npix÷4:npix÷2+npix÷4].^.5)
+  title("$(names[i+1])")
+end
+suptitle("First 12 Zernike aberrations")
+
+
+# This shows how aberrations affect images
+
+source = read(FITS("saturn.fits")[1]);
+npix = size(source, 1)
+diameter=16
+aperture = circular_aperture(npix=npix, diameter=diameter, centered=true, normalize=true); 
+psf=abs2.(ifft2(aperture.*cis.(100*zernike(i+1, npix=npix, diameter=64, centered=true)))*npix); 
+image=convolve(source, psf)
+fig=figure("")
+subplot(121); imshow(source); title("Source")
+subplot(122); imshow(image); title("Image")
 tight_layout()
