@@ -147,7 +147,7 @@ npix = size(source, 1)
 diameter=64
 i=3 #Defocus
 aperture = circular_aperture(npix=npix, diameter=diameter, centered=true, normalize=true); 
-psf=abs2.(ifft2(aperture.*cis.(20*zernike(i+1, npix=npix, diameter=64, centered=true)))*npix); 
+psf=abs2.(ifft2(aperture.*cis.(20*zernike(i+1, npix=npix, diameter=diameter, centered=true)))*npix); 
 image=convolve(source, psf)
 fig=figure("")
 subplot(121); imshow(source); title("Source")
