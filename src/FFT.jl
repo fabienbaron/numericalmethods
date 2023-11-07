@@ -122,13 +122,13 @@ imshow(abs.(tiptilt))
 include("zernikes.jl")
 # Visualize the first 25 Zernikes one by one
 npix=512;
-diameter=32
+diameter=64
 aperture = circular_aperture(npix=npix, diameter=diameter, centered=true, normalize=true); 
 fig = figure("PSF affected by single Zernike mode",figsize=(12,12))
 fig.subplots(3,4)
 names = ["Piston", "Tip", "Tilt", "Defocus", "Primary astigmatism", "Primary astigmatism", "Horizontal coma", "Vertical coma", "Trefoil", "Trefoil", "Spherical Aberration", "Quadrafoil", "Quadrafoil", "Secondary coma", "Secondary coma"]
 for i=0:11
-  phase= 100*zernike(i+1, npix=npix, diameter=64, centered=true);
+  phase= 100*zernike(i+1, npix=npix, diameter=diameter, centered=true);
   pupil=aperture.*cis.(phase);
   psf=abs2.(ifft2(pupil)*npix); #the npix factor is for the normalization of the fft
   subplot(3, 4, i+1)
@@ -144,9 +144,10 @@ suptitle("First 12 Zernike aberrations")
 
 source = read(FITS("saturn.fits")[1]);
 npix = size(source, 1)
-diameter=16
+diameter=64
+i=3 #Defocus
 aperture = circular_aperture(npix=npix, diameter=diameter, centered=true, normalize=true); 
-psf=abs2.(ifft2(aperture.*cis.(100*zernike(i+1, npix=npix, diameter=64, centered=true)))*npix); 
+psf=abs2.(ifft2(aperture.*cis.(20*zernike(i+1, npix=npix, diameter=64, centered=true)))*npix); 
 image=convolve(source, psf)
 fig=figure("")
 subplot(121); imshow(source); title("Source")
