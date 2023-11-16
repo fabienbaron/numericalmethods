@@ -30,7 +30,7 @@ imview(reshape(y, nx, nx))
 
 # ADMM-MD
 u1 = zeros(Float64, nx0,nx0);
-u1[nu+1:nx0-nu, nu+1:nx0-nu] = reshape(y,nx,nx)
+u1[nu+1:nx0-nu, nu+1:nx0-nu] = y
 d1 = zeros(Float64, nx0, nx0)
 
 u2 = Γ(u1)
@@ -40,7 +40,7 @@ d2 = zeros(Float64, nx0, nx0, 2)
 µ1 = 1e-2
 µ2 = 1e-2
 
-niter = 2000
+niter = 1000
 z=Float64[]
 
 r1 = zeros(Float64, niter);
@@ -60,11 +60,12 @@ for k=1:niter
     r2[k] = norm(Γ(z) - u2)
     println("$k r1:$(r1[k]) r2: $(r2[k]) dist: $(norm(z-x0,1)/length(x0))")
     if mod(k,100) == 0
-        imview3(reshape(x0,nx0,nx0), reshape(y,nx,nx), reshape(z,nx0,nx0))
+        imview3(x0,y,z)
     end
 end
 
-imview(reshape(z, nx0, nx0))
+imview(z, title="Reconstruction")
+suptitle("Boundaries")
 plot([nu, nu], [nu, nx0-nu], "w--")
 plot([nx0-nu, nx0-nu], [nx0-nu, nu], "w--")
 plot([nu, nx0-nu], [nx0-nu, nx0-nu], "w--")
@@ -72,9 +73,11 @@ plot([nu, nx0-nu], [nu, nu], "w--")
 
 fig = figure(figsize=(10,5))
 subplot(1,2,1)
-imshow(M(z), cmap=:gray)
+imshow(eshape(y,nx,nx),cmap=:gray )
+title("Data")
 subplot(1,2,2)
-imshow(reshape(y,nx,nx),cmap=:gray )
+imshow(M(z), cmap=:gray)
+title("Reconstructed with total variation")
 
 # TBD: Accelerating it with functions -- note cropping/padding is a little different (2 pix wider here)
 M = x->x[1+nu:end-nu, 1+nu:end-nu];
