@@ -1,4 +1,4 @@
-# Numerical methods for Physics and Astronomy
+# Numerical methods for Physics and Astronomy - Fall 2025
 
 This class will use the Julia programming language as well as Python's matplotlib library for visualizations.
 
