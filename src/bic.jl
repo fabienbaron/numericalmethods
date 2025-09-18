@@ -75,8 +75,11 @@ plot(x, f3(minx));
 
 
 # Results
-k=1; println("M1 chi2: ", minimum(chi2_M1), " chi2r: ", minimum(chi2_M1)/(n-k), " log Z1 = ", logZ1, " AIC= ", minimum(chi2_M1)+2*k, " AICc= ", minimum(chi2_M1)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M1)+k*log(n), "\n");
+k=1; println("M1 chi2: ", minimum(chi2_M1), " chi2r: ", minimum(chi2_M1)/(n-k),
+ " log Z1 (calc)= ", logZ1, " log Z1 (UN)= ", logZ1_ultranest, " AIC= ", minimum(chi2_M1)+2*k, " AICc= ", minimum(chi2_M1)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M1)+k*log(n), "\n");
 
-k=2; println("M2 chi2: ", minimum(chi2_M2), " chi2r: ", minimum(chi2_M2)/(n-k), " log Z2 = ", logZ2, " AIC= ", minimum(chi2_M2)+2*k," AICc= ", minimum(chi2_M2)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M2)+k*log(n), "\n");
+k=2; println("M2 chi2: ", minimum(chi2_M2), " chi2r: ", minimum(chi2_M2)/(n-k),
+ " log Z2 (calc)= ", logZ2, " log Z2 (UN)= ", logZ2_ultranest, " AIC= ", minimum(chi2_M2)+2*k," AICc= ", minimum(chi2_M2)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M2)+k*log(n), "\n");
 
-k=3; println("M3 chi2: ", minimum(chi2_M3), " chi2r: ", minimum(chi2_M3)/(n-k), " log Z3 = ", logZ3, " AIC= ", minimum(chi2_M3)+2*k," AICc= ", minimum(chi2_M3)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M3)+k*log(n));
+k=3; println("M3 chi2: ", minimum(chi2_M3), " chi2r: ", minimum(chi2_M3)/(n-k),
+ " log Z3 (calc)= ", logZ3, " log Z3 (UN)= ", logZ3_ultranest, " AIC= ", minimum(chi2_M3)+2*k," AICc= ", minimum(chi2_M3)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M3)+k*log(n));
