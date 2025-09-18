@@ -35,7 +35,7 @@ minindx = findmin(chi2_M1)[2]
 plot(x, f1(gridθ[minindx[1]]));
 # computation of evidence (marginal likelihood)
 delta_θ = gridθ[2]-gridθ[1];
-logZ1 = log(delta_θ) + logsumexp(-0.5*chi2_M1);
+logZ1 = 2log(delta_θ) + 2logsumexp(-0.5*chi2_M1);
 ~, minx, ~, result = fit_chi2_ultranest(f1, y, σ, [0.0], [10.0], cornerplot=false);
 logZ1_ultranest = result["logz"]
 plot(x, f1(minx));
@@ -51,7 +51,7 @@ plot(x, f2([gridθ1[minindx[1]],gridθ2[minindx[2]]]));
 # computation of evidence (marginal likelihood)
 delta_θ1 = gridθ1[2]-gridθ1[1];
 delta_θ2 = gridθ2[2]-gridθ2[1];
-logZ2 = log(delta_θ1*delta_θ2) + logsumexp(-0.5*chi2_M2)
+logZ2 = 2log(delta_θ1*delta_θ2) + 2logsumexp(-0.5*chi2_M2)
 ~, minx, ~, result = fit_chi2_ultranest(f2, y, σ, [0.0,0.0], [10.0,10.0], cornerplot=false);
 logZ2_ultranest = result["logz"]
 plot(x, f2(minx));
@@ -68,7 +68,7 @@ plot(x, f3([gridθ1[minindx[1]],gridθ2[minindx[2]],gridθ3[minindx[3]]]));
 delta_θ1 =gridθ1[2]-gridθ1[1];
 delta_θ2 =gridθ2[2]-gridθ2[1];
 delta_θ3 =gridθ3[2]-gridθ3[1];
-logZ3 = log(delta_θ1*delta_θ2*delta_θ3) + logsumexp(-0.5*chi2_M3)
+logZ3 = 2log(delta_θ1*delta_θ2*delta_θ3) + 2logsumexp(-0.5*chi2_M3)
 ~, minx, ~, result = fit_chi2_ultranest(f3, y, σ, [0.0,0.0,-5.0], [10.0,10.0,5.0], cornerplot=false);
 logZ3_ultranest = result["logz"]
 plot(x, f3(minx));
@@ -76,10 +76,10 @@ plot(x, f3(minx));
 
 # Results
 k=1; println("M1 chi2: ", minimum(chi2_M1), " chi2r: ", minimum(chi2_M1)/(n-k),
- " log Z1 (calc)= ", logZ1, " log Z1 (UN)= ", logZ1_ultranest, " AIC= ", minimum(chi2_M1)+2*k, " AICc= ", minimum(chi2_M1)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M1)+k*log(n), "\n");
+ "\nlog Z1 (calc)= ", logZ1, " log Z1 (UN)= ", logZ1_ultranest, "\nAIC= ", minimum(chi2_M1)+2*k, " AICc= ", minimum(chi2_M1)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M1)+k*log(n), "\n");
 
 k=2; println("M2 chi2: ", minimum(chi2_M2), " chi2r: ", minimum(chi2_M2)/(n-k),
- " log Z2 (calc)= ", logZ2, " log Z2 (UN)= ", logZ2_ultranest, " AIC= ", minimum(chi2_M2)+2*k," AICc= ", minimum(chi2_M2)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M2)+k*log(n), "\n");
+ "\nlog Z2 (calc)= ", logZ2, " log Z2 (UN)= ", logZ2_ultranest, "\nAIC= ", minimum(chi2_M2)+2*k," AICc= ", minimum(chi2_M2)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M2)+k*log(n), "\n");
 
 k=3; println("M3 chi2: ", minimum(chi2_M3), " chi2r: ", minimum(chi2_M3)/(n-k),
- " log Z3 (calc)= ", logZ3, " log Z3 (UN)= ", logZ3_ultranest, " AIC= ", minimum(chi2_M3)+2*k," AICc= ", minimum(chi2_M3)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M3)+k*log(n));
+ "\nlog Z3 (calc)= ", logZ3, " log Z3 (UN)= ", logZ3_ultranest, "\nAIC= ", minimum(chi2_M3)+2*k," AICc= ", minimum(chi2_M3)+2k+(2k^2+2k)/(n-k-1), " BIC=  ", minimum(chi2_M3)+k*log(n));
