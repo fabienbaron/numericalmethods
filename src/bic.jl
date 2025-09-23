@@ -2,7 +2,7 @@
 # Bayesian Information Criterion
 #
 using LinearAlgebra, PyPlot
-include("ultranest_fit.jl")
+include("ultranest_fit.jl");
 
 # Generate data
 n = 50
@@ -28,7 +28,7 @@ end
   
 # 1 parameter, 1D grid search, MODEL M1: constant
 f1 = θ->θ[1] .+ 0*x;
-gridθ = range(0, 10, length=1000)
+gridθ = range(-5, 10, length=1000)
 chi2_M1 = [chi2(y, f1(i) , σ) for i in gridθ]
 #plot(gridθ, chi2_M1)
 minindx = findmin(chi2_M1)[2]

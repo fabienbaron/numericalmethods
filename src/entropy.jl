@@ -7,7 +7,7 @@ entropy=vec(sum(-data.*log.(data), dims=(1,2)))
 indx = sortperm(entropy)
 indx_lowest_entropy = indx[1]
 entropy[indx_lowest_entropy]
-indx_lowest_entropy = indx[end]
+indx_highest_entropy = indx[end]
 entropy[indx_highest_entropy]
 imshow(data[:,:,indx_lowest_entropy]) # image with the lowest entropy!
 

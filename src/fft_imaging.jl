@@ -1,6 +1,6 @@
-using FFTW, PyPlot, FITSIO, LinearAlgebra
-include("FFT.jl")
-
+using FFTW, FITSIO, PyPlot, LinearAlgebra
+include("FFT.jl"); 
+include("fits.jl"); 
 
 # Basic FFT of a 1D signal to identify frequencies
 t=range(0,0.5,length=1000); # signal is sampled uniformly
@@ -39,7 +39,7 @@ subplot(122); imshow(abs.(fft2(disc2))); title("|FFT| larger disc")
 tight_layout()
 
 # Fourier filtering - we'll be removing the high or low spatial frequencies
-image = read(FITS("saturn.fits")[1]);
+image = Float64.(readfits("saturn.fits"));
 N=size(image,1)
 yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
 xx = yy'; rr = sqrt.(xx.^2 + yy.^2);
@@ -53,6 +53,50 @@ subplot(131); imshow(image); title("Truth")
 subplot(132); imshow(high_filtered_image); title("High Freq Filtered")
 subplot(133); imshow(low_filtered_image); title("Low Freq Filtered")
 tight_layout()
+
+# DC component (the zero frequency) = flux of the image
+image_sat =  Float64.(readfits("saturn.fits"));
+fft_sat = fft(image_sat)
+sum(image_sat)
+fft_sat[1,1]
+
+# With fftshift-ed function, the DC is located at [N÷2+1,N÷2+1]
+fft_sat = fft2(image_sat)
+fft_sat[129,129]
+N = size(image_sat,1)
+fft_sat[N÷2+1,N÷2+1]
+
+
+#
+# Phase swap example
+#
+image_sat =  Float64.(readfits("saturn.fits"));
+image_jup =  Float64.(readfits("jupiter.fits"));
+fft_sat = fft2(image_sat)
+fft_jup = fft2(image_jup)
+
+# we can decompose Fourier space into modulus/phase
+abs_sat = abs.(fft_sat)
+abs_jup = abs.(fft_jup)
+# The PSD is the square modulus of the Fourier transform
+
+phase_sat = angle.(fft_sat)
+phase_jup = angle.(fft_jup)
+
+# cis(x) = exp(i * x)
+sat_reconstructed = real(ifft2(abs_sat.*cis.(phase_sat)))
+imshow(sat_reconstructed)
+
+jup_reconstructed = real(ifft2(abs_jup.*cis.(phase_jup)))
+imshow(jup_reconstructed)
+
+sat_abs_jup_phase =real(ifft2(abs_sat.*cis.(phase_jup)))
+imshow(sat_abs_jup_phase)
+
+jup_abs_sat_phase =real(ifft2(abs_jup.*cis.(phase_sat)))
+imshow(jup_abs_sat_phase)
+
+# -> the phase is carrying more of the visual information
 
 #
 # Other applications of the FFT
