@@ -48,12 +48,18 @@ low_filtered_image = fouriermask(image, mask_low)
 fft_sat = fft2(image) 
 imshow(real.(ifft2(fft_sat.*mask_low)))
 imshow(real.(ifft2(fft_sat.*mask_hi)))
-
 fig = figure("Filtering example", figsize=(12,4));
 subplot(131); imshow(image); title("Truth")
 subplot(132); imshow(high_filtered_image); title("High Freq Filtered")
 subplot(133); imshow(low_filtered_image); title("Low Freq Filtered")
 tight_layout()
+
+PSD = abs2.(fft_sat)
+nrad = div(N,2)-1
+profile_mask = [findall(rr.>i-1 .&& rr.<i+1)  for i=1:nrad]
+PSD_r = vec([mean(PSD[profile_mask[i]]) for i=1:nrad])
+plot(log.(PSD_r))
+plot(log.((1:nrad).^-3.4).+30)
 
 # DC component (the zero frequency) = flux of the image
 image_sat =  Float64.(readfits("saturn.fits"));
@@ -146,22 +152,22 @@ imshow(abs.(tiptilt))
 
 
 # Computation of the spatial gradient of an image with a small kernel
-nx = size(image_sat, 1)
-sx = zeros(nx,nx); 
+N = size(image_sat, 1)
+sx = zeros(N,N); 
 sx[1,1]=1; 
 sx[1,end]=-1; 
 sx = fftshift(sx)
 
-sy = zeros(nx,nx); 
+sy = zeros(N,N); 
 sy[1,1]=1; 
 sy[end,1]=-1; 
 sy = fftshift(sy)
 ∇ = X -> hcat(convolve(X, sx), convolve(X,sy));
 
 # Sobel gradient
-c = nx÷2+1;
-Gx = zeros(nx,nx); 
-Gy = zeros(nx,nx); 
+c = N÷2+1;
+Gx = zeros(N,N); 
+Gy = zeros(N,N); 
 Gx[c-1:c+1, c-1:c+1] = [ -1 0 1; -2 0 2; -1 0 1]
 Gy[c-1:c+1, c-1:c+1] = [-1 -2 -1; 0 0 0; 1 2 1]
 ∇_sobel = X -> hcat(convolve(X, Gx), convolve(X,Gy));
