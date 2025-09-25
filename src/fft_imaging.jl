@@ -10,9 +10,6 @@ figure("Signal"); plot(x);
 X=fft(x)
 figure("Modulus FFT"); plot(abs.(X)[1:50]);
 
-
-
-
 # FFTs of a rectangle
 x = zeros(64,64)
 x[12:35, 23:46] .= 1;
@@ -34,8 +31,8 @@ xx = yy'; rr = sqrt.(xx.^2 + yy.^2);
 disc1 = rr.<20; # small disc
 disc2 = rr.<60; # larger disc
 fig = figure("2D objects", figsize=(8,4));
-subplot(121); imshow(abs.(fft2(disc1))); title("|FFT| small disc")
-subplot(122); imshow(abs.(fft2(disc2))); title("|FFT| larger disc")
+subplot(121); imshow(abs.(fft2(disc1)).^.2); title("|FFT| small disc")
+subplot(122); imshow(abs.(fft2(disc2)).^.2); title("|FFT| larger disc")
 tight_layout()
 
 # Fourier filtering - we'll be removing the high or low spatial frequencies
@@ -46,8 +43,12 @@ xx = yy'; rr = sqrt.(xx.^2 + yy.^2);
 mask = rr.<10; # this will be our mask in Fourier space
 mask_hi = mask; # we need to apply our mask at the right location in Fourier space
 mask_low = 1 .- mask_hi
-high_filtered_image = convolve_fouriermask(image, mask_hi)
-low_filtered_image = convolve_fouriermask(image, mask_low)
+high_filtered_image = fouriermask(image, mask_hi)
+low_filtered_image = fouriermask(image, mask_low)
+fft_sat = fft2(image) 
+imshow(real.(ifft2(fft_sat.*mask_low)))
+imshow(real.(ifft2(fft_sat.*mask_hi)))
+
 fig = figure("Filtering example", figsize=(12,4));
 subplot(131); imshow(image); title("Truth")
 subplot(132); imshow(high_filtered_image); title("High Freq Filtered")
@@ -142,6 +143,29 @@ subplot(121); imshow(image); title("Original")
 subplot(122); imshow(shifted_image); title("Shifted")
 tight_layout()
 imshow(abs.(tiptilt))
+
+
+# Computation of the spatial gradient of an image with a small kernel
+nx = size(image_sat, 1)
+sx = zeros(nx,nx); 
+sx[1,1]=1; 
+sx[1,end]=-1; 
+sx = fftshift(sx)
+
+sy = zeros(nx,nx); 
+sy[1,1]=1; 
+sy[end,1]=-1; 
+sy = fftshift(sy)
+∇ = X -> hcat(convolve(X, sx), convolve(X,sy));
+
+# Sobel gradient
+c = nx÷2+1;
+Gx = zeros(nx,nx); 
+Gy = zeros(nx,nx); 
+Gx[c-1:c+1, c-1:c+1] = [ -1 0 1; -2 0 2; -1 0 1]
+Gy[c-1:c+1, c-1:c+1] = [-1 -2 -1; 0 0 0; 1 2 1]
+∇_sobel = X -> hcat(convolve(X, Gx), convolve(X,Gy));
+
 
 
 # Point spread functions

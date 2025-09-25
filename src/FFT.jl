@@ -13,6 +13,6 @@ function correlate(a, b)
     return real.(ifft2(fft2(a).*conj(fft2(b))));
 end
 
-function convolve_fouriermask(a, mask) 
+function fouriermask(a, mask) 
     return real.(ifft2(fft2(a).*mask));
 end
