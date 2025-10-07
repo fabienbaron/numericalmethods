@@ -8,7 +8,7 @@ A = matrixdepot("blur", Float64, 64, 3, 2.0, true)
 y = A*x0 + sigma.*randn(Float64,size(x0));
 Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
-# Classic Tikhonov "rdige regression"
+# Classic Tikhonov "ridge regression"
 λ = 10.0.^(range(-6,5,length=101));
 nλ = length(λ);
 mindist = 1e99;
@@ -32,7 +32,7 @@ for i=1:nλ
     end
     @printf("It: %3i obj:%8.1e λ:%8.1e chi2r: %5.2f chi2: %8.2f  λ*reg: %8.2f reg: %8.2f dist: %8.2f\n", i, obj[i], λ[i], chi2[i]/length(y), chi2[i], reg[i], λ[i]*reg[i], dist  );
     imview(reshape(x, (nx,nx)))
-    #readline();
+   # readline();
 end
 
 # Display object, noisy image and reconstruction

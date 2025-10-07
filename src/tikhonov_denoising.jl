@@ -4,7 +4,7 @@ x0=read(FITS("saturn64.fits")[1]);nx=size(x0,1)
 x0 = vec(x0); # note: x0 is a 2D array, but we will work with vectors
 sigma= maximum(x0)/2*rand(Float64, size(x0))
 y = x0 + sigma.*randn(Float64,size(x0));
-Σ=Diagonal(1.0./sigma.^2); # covariance matrix
+Σ=Diagonal(1.0./sigma.^2); # inverse covariance matrix
 
 # Chi2 and reduced chi2
 #

@@ -38,8 +38,8 @@ tight_layout()
 # Fourier filtering - we'll be removing the high or low spatial frequencies
 image = Float64.(readfits("saturn.fits"));
 N=size(image,1)
-yy = repeat(collect(range(1, N, length=N)).-div(N,2), 1, N);
-xx = yy'; rr = sqrt.(xx.^2 + yy.^2);
+yy = repeat(fftshift(fftfreq(N))*N, 1, N);
+xx = yy'; rr = hypot.(yy, xx);
 mask = rr.<10; # this will be our mask in Fourier space
 mask_hi = mask; # we need to apply our mask at the right location in Fourier space
 mask_low = 1 .- mask_hi
@@ -111,7 +111,7 @@ imshow(jup_abs_sat_phase)
 
 # correlation
 x1=zeros(64,64); x1[23:34, 16:23].=1; x1[45:56,23:56].=2
-x2=circshift(x1,(5,-8))+randn(64,64)
+x2=circshift(x1,(5,-8))+8*randn(64,64)
 
 fig = figure()
 imshow(correlate(x1,x1)); # Autocorrelation
@@ -172,8 +172,6 @@ Gx[c-1:c+1, c-1:c+1] = [ -1 0 1; -2 0 2; -1 0 1]
 Gy[c-1:c+1, c-1:c+1] = [-1 -2 -1; 0 0 0; 1 2 1]
 ∇_sobel = X -> hcat(convolve(X, Gx), convolve(X,Gy));
 
-
-
 # Point spread functions
 include("zernikes.jl")
 # Visualize the first 25 Zernikes one by one
@@ -184,7 +182,7 @@ fig = figure("PSF affected by single Zernike mode",figsize=(12,12))
 fig.subplots(3,4)
 names = ["Piston", "Tip", "Tilt", "Defocus", "Primary astigmatism", "Primary astigmatism", "Horizontal coma", "Vertical coma", "Trefoil", "Trefoil", "Spherical Aberration", "Quadrafoil", "Quadrafoil", "Secondary coma", "Secondary coma"]
 for i=0:11
-  phase= 100*zernike(i+1, npix=npix, diameter=diameter, centered=true);
+  phase= .5*100*zernike(i+1, npix=npix, diameter=diameter, centered=true);
   pupil=aperture.*cis.(phase);
   psf=abs2.(ifft2(pupil)*npix); #the npix factor is for the normalization of the fft
   subplot(3, 4, i+1)
