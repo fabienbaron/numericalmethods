@@ -1,11 +1,13 @@
 using PyPlot, LinearAlgebra, NLopt, Statistics
-N=30
+N=5
 σ=rand(N);
 X=sort(rand(N));
 θ1=5
 θ2=7
 Y=θ1 .+ θ2*X + σ.*randn(N);
+clf(); 
 scatter(X,Y)
+errorbar(X,Y,σ, linestyle="none")
 chi2=(θ,dummy)->norm((Y - (θ[1] .+ θ[2]*X) )./σ)^2
 #Minimization
 θ_init = [1.0,1.0];
@@ -14,10 +16,21 @@ min_objective!(optimizer, chi2);
 (minchi2,θ_opt,ret) = optimize(optimizer, θ_init);
 println("got $minchi2 at $θ_opt (returned $ret)");
 
+# LsqFit (Levenberg-Marquardt algorithm)
+using LsqFit
+m = (X,θ) ->θ[1] .+ θ[2]*X
+fit = curve_fit(m, X, Y, 1.0./σ.^2 , θ_init)
+cov = estimate_covar(fit)
+se = standard_errors(fit)
+margin_of_error = margin_error(fit, 0.3)
+confidence_intervals = confidence_interval(fit, 0.1) # 10%
+
+# Cramer-Rao bound (TBD)
+# This will be completed when we see the CRB and Fisher information
+
 #
 # Jacknife
 #
-
 X_orig = deepcopy(X)
 Y_orig = deepcopy(Y)
 σ_orig = deepcopy(σ)
@@ -35,10 +48,8 @@ for i=1:N
     (minchi2,θ_opt[:,i],ret) = optimize(optimizer, θ_init);
     #println("got $minchi2 at $θ_opt (returned $ret)");
 end
-mean(θ_opt[1,:])
-std(θ_opt[1,:])
-mean(θ_opt[2,:])
-std(θ_opt[2,:])
+mean(θ_opt, dims=2) # Mean values -> nominal values
+std(θ_opt, dims=2) # Std -> Jacknife uncertainties
 
 #
 # Bootstrap with replacement ->>> WORKS
