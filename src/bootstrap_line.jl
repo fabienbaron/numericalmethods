@@ -10,7 +10,7 @@ chi2=(θ,dummy)->norm((Y - (θ[2] .+ θ[1]*X) )./σ)^2
 optimizer = Opt(:LN_NELDERMEAD, length(θ_init));
 min_objective!(optimizer, chi2);
 (minchi2,θ_hat,ret) = optimize(optimizer, θ_init);
-println("got $minchi2 at $θ_opt (returned $ret)");
+println("got $minchi2 at $θ_hat (returned $ret)");
 
 # --- Plot data and fitted line ---
 figure(figsize=(7,5))

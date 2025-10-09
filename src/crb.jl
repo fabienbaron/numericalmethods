@@ -2,6 +2,7 @@ using LinearAlgebra,  Random, Distributions,  PyPlot
 
 N = 50
 x = range(-2, 2, length=N)
+#x = [-2, -1.9, -1.8,-1.6, 2.0]
 θ = [1.5, -0.7]
 
 σ = 0.5
