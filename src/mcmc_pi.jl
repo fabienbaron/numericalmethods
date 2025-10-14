@@ -1,5 +1,5 @@
 using PyPlot
-N = 100 # Number of grains of sand
+N = 1000 # Number of grains of sand
 x = 2*rand(N) .- 1 
 y = 2*rand(N) .- 1
 indx_out = findall(x.^2 .+ y.^2  .> 1)
