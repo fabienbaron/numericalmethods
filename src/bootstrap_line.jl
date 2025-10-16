@@ -1,5 +1,5 @@
 using PyPlot, LinearAlgebra, NLopt, Statistics
-N=5
+N=20
 σ=rand(N);
 X=sort(rand(N));
 θ=[5.0,7.0]
@@ -65,11 +65,12 @@ using RobustModels;
 mean(MEstimator{HuberLoss}(), θ_opt; dims=2); 
 mean_and_std(SEstimator{TukeyLoss}(),θ_opt , dims=2)
 mean_and_std(TauEstimator{YohaiZamarLoss}(),θ_opt , dims=2)
+
 #
 # Bootstrap with replacement 
 #
 
-Nboot = 10000
+Nboot = 1000
 θ_opt = zeros(Float64, 2, Nboot)
 for i=1:Nboot
     # Change the dataset on which we do minimization
@@ -83,7 +84,6 @@ for i=1:Nboot
   #  optimizer = Opt(:LN_NELDERMEAD, length(θ_init));
   #  min_objective!(optimizer, chi2);
   #  (minchi2,θ_opt[:,i],ret) = optimize(optimizer, θ_init);
-
     fit = curve_fit(m, X, Y, 1.0./σ.^2 , θ_init);
     θ_opt[:,i] = fit.param
 

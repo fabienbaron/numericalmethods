@@ -11,12 +11,14 @@ xx = yy';
 
 f = f_ack
 
-
 fmap = f(xx,yy)
+
+plot_surface(xx, yy, fmap, cmap="Spectral_r", edgecolor="none")
+
 # Plots
 
-clf();imshow(fmap.^.25);tight_layout()
-niter = 2000;
+clf();imshow(fmap.^.25, cmap="Spectral_r");tight_layout()
+niter = 20;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 
@@ -49,5 +51,5 @@ for i=2:niter
         scatter((θ_trial[1]+5)*100+1,(θ_trial[2]+5)*100+1, color=:red, s=10)
     end
 end
-
+scatter((θ[end,1]+5)*100+1,(θ[end,2]+5)*100+1, color=:green)
 f(θ[niter,1],θ[niter,2])

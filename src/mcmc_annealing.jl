@@ -10,10 +10,14 @@ yy = repeat(rr,1,1001);
 xx = yy';
 
 fmap = f_ack(xx,yy)
+
+
+plot_surface(xx, yy, fmap, cmap="Spectral_r", edgecolor="none")
+
 # Plots
 
-clf();imshow(fmap.^.5);tight_layout()
-niter = 1000;
+clf();imshow(fmap.^.5, cmap="Spectral_r" );tight_layout()
+niter = 100;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 acc = zeros(Float64, niter)
@@ -23,16 +27,15 @@ acc = zeros(Float64, niter)
 # Plot initial location
 scatter((θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1, color=:blue,s=10)
 accepted_pos = [(θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1]
-stepsize = 1.0
-t0 = 1.0;
+stepsize = 10.0
+t0 = 10.0;
 tniter = 0.01;
 #temperature = (tniter - t0)/2 * (1 .+ cos.(collect(1:niter)*pi/niter)); #t *= 0.1;
 temperature = t0 .- collect(1:niter)*(t0-tniter)/niter;
 naccepted =0
 # Initialize Markov Chain
 for i=2:niter
-    stepsize = 1.0 / sqrt(i)
-    δ[i-1,:] = stepsize*(rand(2).-0.5);
+    δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5); # compute actual move for this iteration
     θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0)
     f_current = f_ack(θ[i-1,1], θ[i-1,2]) ; # f at current location
     f_trial = f_ack(θ_trial[1], θ_trial[2]) # f at tentative location
@@ -51,4 +54,5 @@ for i=2:niter
     end
 scatter((θ[i,1]+5)*100+1,(θ[i,2]+5)*100+1, color=:black)
 end
+scatter((θ[end,1]+5)*100+1,(θ[end,2]+5)*100+1, color=:green)
 f_ack(θ[niter,1],θ[niter,2])
