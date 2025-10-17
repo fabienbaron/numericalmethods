@@ -12,13 +12,12 @@ xx = yy';
 f = f_ack
 
 fmap = f(xx,yy)
-
 plot_surface(xx, yy, fmap, cmap="Spectral_r", edgecolor="none")
 
 # Plots
 
 clf();imshow(fmap.^.25, cmap="Spectral_r");tight_layout()
-niter = 20;
+niter = 200;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 
@@ -34,6 +33,8 @@ naccepted=0
 # Initialize Markov Chain
 for i=2:niter
     δ[i-1,:] = stepsize/sqrt(i)*(rand(2).-0.5); # compute actual move for this iteration
+    #δ[i-1,:] = stepsize*(rand(2).-0.5); # compute actual move for this iteration
+    
     θ_trial= min.(max.(θ[i-1,:] + δ[i-1,:],-5.0),5.0) # restrict trial move to be within range -5:5
 #    θ_trial= rand(2)*10 .-5 # just try a random new point (non-Markov, generally bad)
 

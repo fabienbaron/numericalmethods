@@ -17,7 +17,7 @@ plot_surface(xx, yy, fmap, cmap="Spectral_r", edgecolor="none")
 # Plots
 
 clf();imshow(fmap.^.5, cmap="Spectral_r" );tight_layout()
-niter = 100;
+niter = 2000;
 θ = zeros(Float64, niter, 2) # θ[i,:] -> [x[i], y[i]]
 δ = zeros(Float64, niter, 2)
 acc = zeros(Float64, niter)
@@ -28,7 +28,7 @@ acc = zeros(Float64, niter)
 scatter((θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1, color=:blue,s=10)
 accepted_pos = [(θ[1,1]+5)*100+1,(θ[1,2]+5)*100+1]
 stepsize = 10.0
-t0 = 10.0;
+t0 = 1.0;
 tniter = 0.01;
 #temperature = (tniter - t0)/2 * (1 .+ cos.(collect(1:niter)*pi/niter)); #t *= 0.1;
 temperature = t0 .- collect(1:niter)*(t0-tniter)/niter;
