@@ -1,6 +1,6 @@
 using LinearAlgebra,PyPlot
 
-function K(x,xp, σ, l)
+function K(x, xp, σ, l)
 K = zeros(Float64, length(x), length(xp));
 for i=1:length(x)
     for j=1:length(xp)
@@ -15,7 +15,6 @@ end
 N = 100
 xp=1:N # set of coordinates
 Σ=K(xp,xp, σ, l) # Evaluate the kernel for the set
-
 L=cholesky(Σ + 1e-10*I(size(Σ,1))).U' 
 norm(L*L'-Σ) #~ 0
 m = zeros(N) # mean function
@@ -25,7 +24,7 @@ end
 
 
 f=x->sin(0.1*x)*(x/5)^2
- clf()
+clf()
 plot(1:100, f.(1:100), linestyle="dotted", label="Truth")
 x = sort(unique(ceil.(Int, rand(30)*100)))
 N = length(x)
@@ -85,9 +84,9 @@ res = optimize(neg_log_marginal_likelihood, lower, upper, init_params, Fminbox()
 println("Optimized σ = $σ_opt, l = $l_opt")
 
 # You can check with a grid search
-# σ_vals = range(50, 1000, length=100)
-# l_vals = range(1, 20, length=100)
-# map_lml = reshape([neg_log_marginal_likelihood([i,j]) for i in σ_vals for j in l_vals], length(l_vals), length(σ_vals) )
+ σ_vals = range(50, 1000, length=100)
+ l_vals = range(1, 20, length=100)
+ map_lml = reshape([neg_log_marginal_likelihood([i,j]) for i in σ_vals for j in l_vals], length(l_vals), length(σ_vals) )
 
 
 

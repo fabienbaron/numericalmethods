@@ -45,7 +45,7 @@ std_pred = sqrt.(var_resid)
 figure(figsize=(7,5))
 errorbar(x, y, yerr=σ, fmt="o", color="black", label="data (σ)", capsize=4)
 plot(xnew, μ_pred, "-", color="blue", label="mean prediction")
-fill_between(xnew, μ_pred .- 2std_pred, μ_pred .+ 2std_pred, color="blue", alpha=0.2, label="±2σ GP")
+fill_between(xnew, μ_pred .- 3std_pred, μ_pred .+ 3std_pred, color="blue", alpha=0.2, label="±3σ GP")
 plot(xnew, true_a .* xnew .+ true_b, "--", color="red", label="true line")  # <--- added line
 xlabel("x"); ylabel("y")
 legend()
