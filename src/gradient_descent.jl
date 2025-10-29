@@ -1,46 +1,54 @@
+using LinearAlgebra
 using PyPlot
 #f_ack=(x,y)->-20*exp.(-0.2*sqrt.(0.5*(x.^2+y.^2)))-exp.(0.5*(cos.(2*π*x)+cos.(2*π*y))).+exp(1).+20.0
-a=1; b=100;
-f_ros=x->(a .- x[1]).^2 + b*(x[2] - x[1].^2).^2;
-# rr = collect(range(-5,5,length=1001));
-# yy = repeat(rr,1,1001);
-# xx = yy';
-# fmap = f_ros(xx,yy)
-# # Plots
-# clf();imshow(fmap.^.2)
-g_ros = x -> [-2*(a .- x[1]) - 4b*x[1].*(x[2] .- x[1] .^2), 2b*(x[2] .- x[1].^2)]
+a=1; b=100; 
+# Rosenbrock
+f =x->(a - x[1])^2 + b*(x[2] - x[1]^2)^2;
+# Analytic gradient (2)
+g = x-> [-2(a-x[1])-4b*(x[2]-x[1]^2)*x[1], 2b*x[2]- 2b*x[1]^2];
+# Analytic Hessian (2x2)
+h = x->[2-4b*x[2]+12b*x[1]^2 -4b*x[1] ; -4b*x[1] 2b]
 
-# h_ros = [ ax+y     x^2+b   ]
-#         [  by+x^2     y^2+x^2   ]
-#
-# h_ros(x[1,:]) = [ 0.1   3.4 ]
-#                 [ 3.5   -1.3]
-using LinearAlgebra
-# inv(h_ros(x[1,:])) =  [ 1 2]
-#                       [ 3 4]
-
-function linesearch(x_current, g_current)
-α_try = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10., 100., 1000.]
-fval = zeros(length(α_try))
-for i=1:length(α_try)
-fval[i] = f_ros(x_current - α_try[i] * g_current)
+# Steepest descent
+x = [5.,-2.]; # Our initial point
+# Naive implementation with α small
+α=1e-3
+# low values -> slow 
+# high values -> Inf or NaN
+niter = 1000
+for n=0:niter
+    println("Iteration $n: x = $(round.(x, digits=4)), f(x)= $(f(x))")
+    x = x .- α'.*g(x)
 end
-return α_try[findmin(fval)[2]]
+
+# Manual line search
+x_new = x .- α'.*g(x)
+y_new = [f(x_new[:,i]) for i=1:ntry]
+x_new = x[indmin(y_new)[1]]
+scatter(α, y_new) # plot the function to check
+set_yscale('log')
+
+function linesearch_alpha(x) # note: f and g are predefined
+    ntry = 100 # 100 alphas will be tried
+    α = 10.0.^(range(-5, 5, ntry)) # exponential scale
+    x_new = x .- α'.*g(x)
+    y_new = [f(x_new[:,i]) for i=1:ntry]
+    return α[findmin(y_new)[2]]
 end
 
 N=1000
-f = zeros(N)
-x = zeros(N, 2)
+fhist = zeros(N)
+x = zeros(N+1, 2)
 x[1,:] .= 10*rand(2).-5
-f[1] = f_ros(x[1,:])
+fhist[1] = f(x[1,:])
 
-α=1e-4;
-for i=2:N
-    α = linesearch(x[i-1,:], g_ros(x[i-1,:]))
-    x[i,:] = x[i-1,:] - α* g_ros(x[i-1,:])
-    f[i] = f_ros(x[i,:])
+for i=1:N
+    α = linesearch(x[i,:])
+    x[i+1,:] = x[i,:] - α*g(x[i,:])
+    fhist[i] = f(x[i,:])
 end
+
 rr = collect(range(-5,5,length=1000));
-map = [f_ros([i,j]) for i in rr for j in rr]
+map = [f([i,j]) for i in rr for j in rr]
 imshow(reshape(map.^.2,(1000,1000)))
 scatter((x[:,1].+5)*100, (x[:,2].+5)*100, s=1, color=:red)

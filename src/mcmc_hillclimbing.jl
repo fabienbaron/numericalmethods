@@ -5,6 +5,9 @@ f_ack=(x,y)->-20*exp.(-0.2*sqrt.(0.5*(x.^2+y.^2)))-exp.(0.5*(cos.(2*π*x)+cos.(2
 a=1; b=100;
 f_ros=(x,y)->(a .- x).^2 + b*(y - x.^2).^2;
 
+f_grad = (x,y)-> [ 2(a-x) + 2*b(y-x^2)*-2x ; 2b*(y-x^2)]
+
+
 rr = collect(range(-3,3,length=1001));
 yy = repeat(rr,1,1001);
 xx = yy';
