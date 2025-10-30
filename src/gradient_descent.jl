@@ -71,14 +71,14 @@ f(x[n+1,:]) # What we did
 function linesearch_alpha(x, direction) # note: f and g are predefined
     ntry = 100 # 100 alphas will be tried
     α = 10.0.^(range(-5, 5, ntry)) # exponential scale
-    x_new = x .- α'.*direction
-    y_new = [f(x_new[:,i]) for i=1:ntry]
-    return α[findmin(y_new)[2]]
+    x_try = x .+ α'.*direction
+    y_try = [f(x_try[:,i]) for i=1:ntry]
+    return α[findmin(y_try)[2]]
 end
 
 # Now let's redo our gradient descent with line search
 for n=2:N
-    α = linesearch_alpha(x[n-1,:], g(x[n-1,:]))
+    α = linesearch_alpha(x[n-1,:], -g(x[n-1,:]))
     x[n,:] = x[n-1,:] - α*g(x[n-1,:])
     fhist[n] = f(x[n,:])
     println("Iteration $n: x = $(round.(x[n,:], digits=4)), f(x)= $(f(x[n,:]))")
@@ -89,8 +89,8 @@ rr = collect(range(-5,5,length=1000));
 yy = repeat(rr,1,1000); xx=yy';
 map = reshape([f([i,j]) for i in rr for j in rr],(1000,1000))
 #plot_surface(xx, yy, map, cmap="Spectral_r", edgecolor="none")
-figure(figsize=(12,6),"Gradient descent"); clf()
-subplot(1,2,1)
+figure(figsize=(18,6),"Gradient descent")
+subplot(1,3,1)
 imshow(map.^.2, cmap="Spectral_r");  
 # Initial point
 scatter((x[1,1] +5)*100+1,(x[1,2]+5)*100+1, color=:blue, s=10)
@@ -98,8 +98,13 @@ scatter((x[1,1] +5)*100+1,(x[1,2]+5)*100+1, color=:blue, s=10)
 scatter((x[2:end-1,1].+5)*100, (x[2:end-1,2].+5)*100, s=1, color=:red)
 # End point
 scatter((x[end,1].+5)*100, (x[end,2].+5)*100, s=10, color=:green)
-subplot(1,2,2)
-scatter(1:N, fhist)
+subplot(1,3,2)
+scatter(1:N, fhist, s=2)
 xlabel("Iteration number")
 ylabel("Function value f(x)")
+subplot(1,3,3)
+scatter(1:N, x[:,1], s=2)
+scatter(1:N, x[:,2], s=2)
+xlabel("Iteration number")
+ylabel("x components")
 tight_layout();
