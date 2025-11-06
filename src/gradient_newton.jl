@@ -15,8 +15,6 @@ x=rand(2)*10;
 norm(g(x) - g_ad(x))
 norm(h(x) - h_ad(x))
 
-
-
 #
 # Newton's method
 #

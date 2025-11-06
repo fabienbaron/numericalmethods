@@ -17,18 +17,18 @@ figure(figsize=(12,6),"Gradient descent")
 subplot(1,2,1)
 imshow(map.^.2, cmap="Spectral_r");  
 
-N=100; # Number of iterations
+N=1000; # Number of iterations
 x = zeros(N, 2) # History of the x locations
 fhist = zeros(N) # History of the function values at x
 x[1,:] .= [4.0, -2.0]
 fhist[1] =  f(x[1,:])
 # Steepest descent
 # Naive implementation with α small
-α=1e-7
+α=1e-4
 # low values -> slow 
 # high values -> Inf or NaN
 for n=2:N
-    x[n,:] = x[n-1,:] .- α'.*g(x[n-1,:])
+    x[n,:] = x[n-1,:] .- α*g(x[n-1,:])
     fhist[n] = f(x[n,:]) 
     println("Iteration $n: x = $(round.(x[n,:], digits=4)), f(x)= $(f(x[n,:]))")
 end
@@ -102,6 +102,8 @@ subplot(1,3,2)
 scatter(1:N, fhist, s=2)
 xlabel("Iteration number")
 ylabel("Function value f(x)")
+gca().set_yscale("log")
+gca().set_xscale("log")
 subplot(1,3,3)
 scatter(1:N, x[:,1], s=2)
 scatter(1:N, x[:,2], s=2)

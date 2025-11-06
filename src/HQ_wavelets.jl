@@ -8,32 +8,31 @@ include("view.jl")
 #  x_truth[37:60,10:24] .= 9.0;
 #  x_truth = vec(x_truth);
 
-x_truth=read(FITS("saturn.fits")[1]);
-nx=size(x_truth,1)
+# x_truth=read(FITS("saturn.fits")[1]);
+# nx=size(x_truth,1)
+# # Example of transform
+# wt = wavelet(WT.cdf97, WT.Lifting)
+# xt = dwt(x_truth, wt)
+# imview(xt)
+# # To see with better contrast
+# imview(abs.(xt).^.2)
 
-# Example of transform
-wt = wavelet(WT.cdf97, WT.Lifting)
-xt = dwt(x_truth, wt)
-imview(xt)
-# To see with better contrast
-imview(abs.(xt).^.2)
+# # The inverse wavelet transform:
+# idwt(xt, wt)
+# norm(idwt(xt, wt) - x_truth) # the difference with the original image is negligible
 
-# The inverse wavelet transform:
-idwt(xt, wt)
-norm(idwt(xt, wt) - x_truth) # the difference with the original image is negligible
+# norm(abs.(xt).<1,1)
+# # Copy
+# thresholds = [5, 10, 50, 100, 200, 500, 1000]
+# xt_filtered = repeat(xt, 1,1, length(thresholds))
 
-norm(abs.(xt).<1,1)
-# Copy
-thresholds = [5, 10, 50, 100, 200, 500, 1000]
-xt_filtered = repeat(xt, 1,1, length(thresholds))
-
-for i=1:length(thresholds)
-    t = thresholds[i]
-    println("Percentage of coefficients <", t, " = ",norm(abs.(xt).<t,1)/length(xt)*100)
-    xt_filtered[abs.(xt).<t, i] .= 0
-    imshow(idwt(xt_filtered[:,:,i], wt))
-    readline()
-end
+# for i=1:length(thresholds)
+#     t = thresholds[i]
+#     println("Percentage of coefficients <", t, " = ",norm(abs.(xt).<t,1)/length(xt)*100)
+#     xt_filtered[abs.(xt).<t, i] .= 0
+#     imshow(idwt(xt_filtered[:,:,i], wt))
+#     readline()
+# end
 
 #
 # Regularization via Wavelet bases
@@ -75,8 +74,17 @@ H = matrixdepot("blur", Float64, nx, 3, 2.0, true);
 y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 Σ = Diagonal(1.0./sigma.^2); # covariance matrix
 
-function prox_l1(z,α)
-return sign.(z).*max.(abs.(z).-α,0)
+
+prox_l1(x,λ) = sign.(x).*max.(abs.(x).-λ,0)
+prox_l0(x, λ) = ifelse.(abs.(x) .> sqrt(2λ), x, 0)
+prox_l2sq(x, λ) = x / (1 + λ)
+function prox_l2(x, λ)
+    nrm = norm(x)
+    if nrm > λ 
+        return (1 - λ/nrm) * x
+    else
+        return zero(x)
+    end
 end
 
 global mindist = 1e99;
@@ -87,15 +95,20 @@ z = W(x)
 ρ = 0.001;
 
 for iter=1:50
-# x subproblem
-x=(H'*Σ*H+ρ*WtW)\(H'*Σ*y+ρ*Wt(z)); 
-# z subproblem
-z = prox_l1(W(x),μ/ρ); #
-chi2 = ((y-H*x)'*Σ*(y-H*x))[1]/length(y)
-reg = μ*norm(W(x),1);
-aug = norm(z-W(x),2)^2;
-println("chi2r = ", chi2, " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
-# increase ρ
-ρ = 1.5*ρ
+    # x subproblem
+    x=(H'*Σ*H+ρ*WtW)\(H'*Σ*y+ρ*Wt(z)); 
+    # z subproblem
+    z = prox_l1(W(x),μ/ρ); #
+    chi2 = ((y-H*x)'*Σ*(y-H*x))[1]/length(y)
+    reg = μ*norm(W(x),1);
+    aug = norm(z-W(x),2)^2;
+    println("chi2r = ", chi2, " reg= ", reg, " aug= ", aug, " ρ*aug= ", ρ*aug);
+    # increase ρ
+    ρ = 1.5*ρ
+    subplot(1,2,1)
+    suptitle("Iteration $iter")
+    imshow(reshape(x,(nx,nx)))
+    subplot(1,2,2)
+    imshow(reshape(abs.(W(x))[:,1:2], nx, nx * 2).^.1)
 end
-imview3(x_truth,reshape(y,64,64),reshape(x,(64,64)),figtitle="Multi-wavelet regularization");
+
