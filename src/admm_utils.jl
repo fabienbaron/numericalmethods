@@ -1,3 +1,23 @@
+using FFTW
+
+function ft2(x)
+    return fftshift(fft(ifftshift(x)))
+end
+   
+function ift2(x)
+   return ifftshift(ifft(fftshift(x)))
+end
+
+function convolve(a, b)
+     return real(ift2(ft2(a).*ft2(b)))
+ end
+
+function correlate(a, b)
+    return real(ift2(ft2(a).*conj(ft2(b))))
+end
+
+
+
 
 
 function sparse_mask(nx, xrange, yrange) # A is 1D vector representing a 2D array
@@ -5,9 +25,24 @@ function sparse_mask(nx, xrange, yrange) # A is 1D vector representing a 2D arra
     return sparse(1:length(II), II, ones(Float64, length(II)), length(II), nx*nx)
 end
 
-function prox_l1(u, α)
-    return sign.(u).*max.(abs.(u).-α,0.0)
+prox_pos(x,λ) = max.(x,0.0)
+prox_l1(x,λ) = sign.(x).*max.(abs.(x).-λ,zero(eltype(x)))
+prox_l1_plus(x,λ) = max.(abs.(x).-λ, zero(eltype(x))); # Soft thresholding + non-negativity
+
+prox_l0(x, λ) = ifelse.(abs.(x) .> sqrt(2λ), x, zero(eltype(x)))
+prox_l2sq(x, λ) = x / (1 + λ)
+function prox_l2(x, λ)
+    nrm = norm(x)
+    if nrm > λ 
+        return (1 - λ/nrm) * x
+    else
+        return zero(eltype(x),x)
+    end
 end
+
+   
+
+
 
 function prox_l2dist(u, α, y)
 # proximal operator of g = 1/(2α) * || z - y ||^2
@@ -56,7 +91,7 @@ fsy = fft(sy);
 #gradient operator
 grad2d = X -> cat(dims=3, real.(ifft(fsx.*fft(X))), real.(ifft(fsy.*fft(X))));
 grad2d_conj = G -> real.(ifft( conj(fsx).*fft(G[:,:,1]) + conj(fsy).*fft(G[:,:,2]) ));
-return (grad2d, grad2d_conj, abs2.(fsx), abs2.(fsy))
+return (grad2d, grad2d_conj, abs2.(fsx)+abs2.(fsy))
 end
 
 

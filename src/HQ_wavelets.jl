@@ -76,14 +76,14 @@ y = H*x_truth + sigma.*randn(Float64,size(x_truth));
 
 
 prox_l1(x,λ) = sign.(x).*max.(abs.(x).-λ,0)
-prox_l0(x, λ) = ifelse.(abs.(x) .> sqrt(2λ), x, 0)
+prox_l0(x, λ) = ifelse.(abs.(x) .> sqrt(2λ), x, zero(eltype(x)))
 prox_l2sq(x, λ) = x / (1 + λ)
 function prox_l2(x, λ)
     nrm = norm(x)
     if nrm > λ 
         return (1 - λ/nrm) * x
     else
-        return zero(x)
+        return zero(eltype(x),x)
     end
 end
 
@@ -112,3 +112,5 @@ for iter=1:50
     imshow(reshape(abs.(W(x))[:,1:2], nx, nx * 2).^.1)
 end
 
+subplot(1,2,2)
+imshow(reshape(y, nx, nx))
