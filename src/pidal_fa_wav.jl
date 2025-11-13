@@ -12,7 +12,7 @@ Ht = x->correlate(x, psf)
 PSD_H = abs2.(ft2(psf)) 
 y = poisson(H(x0))
 
-nwavs = 1
+nwavs = 9
 W, Wt = Wav_functions(nwavs);
 PSD_W = nwavs  # diagonal = nwavs*𝟙
 

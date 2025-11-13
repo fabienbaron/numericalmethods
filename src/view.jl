@@ -1,24 +1,24 @@
 using PyPlot
 
-function imview3(xtruth,xnoisy,xreconst;figtitle="", color="gray")
+function imview3(xtruth,xnoisy,xreconst;figtitle="", titles=["Truth","Noisy data","Reconstruction"], color="gray")
     if(ndims(xtruth)==1)
         nx = Int(sqrt(length(xtruth)));
         xtruth = reshape(xtruth,nx,nx);
         xnoisy = reshape(xnoisy,nx,nx);
         xreconst = reshape(xreconst,nx,nx);
     end
-    fig = figure(figtitle,figsize=(12,4))
+    fig = figure(figtitle,figsize=(16,4))
     fig.clear()
     fig.subplots(1,3)
     subplot(1,3,1)
     imshow(xtruth, cmap=ColorMap(color), interpolation="none");
-    title("Truth")
+    title(titles[1])
     subplot(1,3,2)
     imshow(xnoisy, cmap=ColorMap(color), interpolation="none");
-    title("Noisy")
+    title(titles[2])
     subplot(1,3,3)
     imshow(xreconst, cmap=ColorMap(color), interpolation="none");
-    title("Reconstructed")
+    title(titles[3])
 end
 
 function imview(x::Array{Float64,2};title="",zoom=1, color="gray")
