@@ -8,6 +8,7 @@ function imview3(xtruth,xnoisy,xreconst;figtitle="", color="gray")
         xreconst = reshape(xreconst,nx,nx);
     end
     fig = figure(figtitle,figsize=(12,4))
+    fig.clear()
     fig.subplots(1,3)
     subplot(1,3,1)
     imshow(xtruth, cmap=ColorMap(color), interpolation="none");
@@ -18,7 +19,6 @@ function imview3(xtruth,xnoisy,xreconst;figtitle="", color="gray")
     subplot(1,3,3)
     imshow(xreconst, cmap=ColorMap(color), interpolation="none");
     title("Reconstructed")
-    #tight_layout()
 end
 
 function imview(x::Array{Float64,2};title="",zoom=1, color="gray")
