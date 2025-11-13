@@ -26,7 +26,7 @@ y = M(A(x0))
 σ = 1; #maximum(y)/40 # noise level
 y += σ*randn(nx,nx) # add Gaussian white noise
 imview(reshape(y, nx, nx))
-Γ, Γt, Dx2, Dy2 = TV_functions(nx0);
+Γ, Γt, Dx2Dy2 = TV_functions(nx0);
 
 # ADMM-MD
 u1 = zeros(Float64, nx0,nx0);
@@ -47,7 +47,7 @@ r1 = zeros(Float64, niter);
 r2 = zeros(Float64, niter);
 
 for k=1:niter
-    z = real.(ifft(fft(μ1*At(u1+d1) + μ2*Γt(u2+d2))./(μ1*otf2 + μ2*(Dx2+Dy2))))
+    z = real.(ifft(fft(μ1*At(u1+d1) + μ2*Γt(u2+d2))./(μ1*otf2 + μ2*(Dx2Dy2))))
     # Apply proximal operators
     #u1 = (M'*M + μ1*I)\(M'*y + μ1*(A(z)-d1)) # eq 49
     u1 = (Mt(y) + μ1*(A(z)-d1))./(DMtM .+ μ1) # eq 49

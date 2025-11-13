@@ -25,11 +25,12 @@ function sparse_mask(nx, xrange, yrange) # A is 1D vector representing a 2D arra
     return sparse(1:length(II), II, ones(Float64, length(II)), length(II), nx*nx)
 end
 
-prox_pos(x,λ) = max.(x,0.0)
-prox_l1(x,λ) = sign.(x).*max.(abs.(x).-λ,zero(eltype(x)))
-prox_l1_plus(x,λ) = max.(abs.(x).-λ, zero(eltype(x))); # Soft thresholding + non-negativity
+prox_pos(x,λ) = max.(x,zero(eltype(x)))
+prox_l1(x, λ)      = sign.(x) .* max.(abs.(x) .- λ, zero(eltype(x)))
+prox_l1_plus(x, λ) = max.(x .- λ, zero(eltype(x)))
+prox_l0(x, λ)      = ifelse.(abs.(x) .> sqrt(2λ), x, zero(eltype(x)))
+prox_l0_plus(x, λ) = max.(ifelse.(abs.(x) .> sqrt(2λ), x, zero(eltype(x))), zero(eltype(x)))
 
-prox_l0(x, λ) = ifelse.(abs.(x) .> sqrt(2λ), x, zero(eltype(x)))
 prox_l2sq(x, λ) = x / (1 + λ)
 function prox_l2(x, λ)
     nrm = norm(x)
@@ -122,8 +123,8 @@ end
 
 
 function gaussian2d(n,m,sigma)
-g2d = [exp(-((X-(m/2)).^2+(Y-n/2).^2)/(2*sigma.^2)) for X=1:m, Y=1:n]
-return g2d
+g2d = [exp(-((X-(m÷2+1)).^2+(Y-(n÷2+1)).^2)/(2*sigma.^2)) for X=1:m, Y=1:n]
+return g2d/sum(g2d)
 end
 
 function conv_otf(otf::Array{ComplexF64,2}, object::Array{Float64,2})

@@ -5,6 +5,10 @@ x_truth=read(FITS("saturn64.fits")[1]);
 nx=size(x_truth,1)
 x_truth = vec(x_truth); # note: x_truth is a 2D array, but we will work with vectors
 
+
+
+
+
 # # # Square patches
 #   nx = 64
 #   x_truth = zeros(nx,nx)
