@@ -31,7 +31,7 @@ d1 = zeros(Float64, nx, nx)
 d2 = zeros(Float64, nx, nx, 2)
 d3 = zeros(Float64, nx, nx)
 
-τ = 0.1 # Try increasing this x5 multiple times
+τ = 0.1/10 # Try increasing this x5 multiple times
 μ = 1e-3
 
 niter = 1000

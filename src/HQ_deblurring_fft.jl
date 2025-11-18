@@ -38,7 +38,7 @@ for iter=1:200
     z = prox_l1(∇(x),μ/ρ); # should minimize μ*norm(z,1)+0.5*ρ*norm(z-∇*x,2)^2
     chi2 = norm((y-H(x)./sigma))^2
     reg = μ*norm(∇(x),1);
-    aug = ρ*norm(z-∇(x),2)^2;
+    aug = ρ*norm(∇(x)-z,2)^2;
     println(@sprintf("iter %3d | full = %.2f | obj = %.2f |  χ²_r = %.2f | reg = %.2f | ||∇x-z||^2 = %.2f", iter, chi2+reg+aug, chi2+reg, chi2/length(y), reg, aug/ρ))
     # increase ρ
     ρ = 1.2*ρ

@@ -22,7 +22,7 @@ o = ones(nx); D_1D = spdiagm(-1=>-o[1:nx-1],0=>o)
 ∇t∇ = ∇'*∇
 
 global mindist = 1e99;
-μ = .5; # good/ok values: .5 for l1 or l0
+μ = 0.5; # good/ok values: .5 for l1 or l0
 x = copy(y)
 z = ∇*x
 ρ = 0.001;
