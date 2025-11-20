@@ -14,8 +14,7 @@ train_loader = DataLoader((X, Y), batchsize=128, shuffle = true)
 model = Chain(
   Dense(28^2, 128, relu),
   Dense(128, 64, relu),
-  Dense(64, 10),
-  softmax
+  Dense(64, 10),  softmax
 )
 
 # 3. Define loss: note, first argument is the model
