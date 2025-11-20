@@ -9,8 +9,6 @@ Y = onehotbatch(train.targets, 0:9)
 
 train_loader = DataLoader((X, Y), batchsize=128, shuffle = true)
 
-# 2. Define CNN model
-
 # 2. Define CNN model (small)
 model = Chain(
     Conv((5, 5), 1 => 16, relu),      # 28x28x1 -> 24x24x16
@@ -21,6 +19,7 @@ model = Chain(
     Dense(512, 10),                    # 512 -> 10
     softmax
 )
+
 # # Historical LeNet-5 model (Yann LeCun, 1998)
 # model = Chain(
 #     Conv((5, 5), 1 => 6, tanh),        # 28x28x1 -> 24x24x6

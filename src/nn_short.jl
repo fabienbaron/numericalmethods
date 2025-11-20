@@ -27,21 +27,20 @@ X = [0 0 1;
 y = [0; 0; 1; 1]
 
 # Seed random numbers for reproducibility
-Random.seed!(1)
+Random.seed!(10)
 
 # Initialize weights randomly with mean 0
 syn0 = 2 * rand(3, 1) .- 1
 
 for n in 1:10000
     # Forward propagation
-    l0 = X
+    l0 = copy(X)
     l1 = sigmoid(l0 * syn0)
     # Calculate error
     l1_error = y - l1
     if (n % 1000) == 0
         println("Error: ", mean(abs.(l1_error)))
-    end
-    
+    end    
     # Multiply error by slope of sigmoid at l1
     l1_delta = l1_error .* sigmoid_derivative(l1)
     # Update weights
@@ -105,7 +104,6 @@ X = [0 0 1; 0 1 1; 1 0 1; 1 1 1]
 y = [0; 1; 1; 0]
 syn0 = 2 * rand(3, 4) .- 1
 syn1 = 2 * rand(4, 1) .- 1
-
 for j in 1:60000
     l1 = sigmoid(X * syn0)
     l2 = sigmoid(l1 * syn1)
